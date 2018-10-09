@@ -3,8 +3,6 @@
 namespace ByTIC\Auth\Models\Users\Traits;
 
 use ByTIC\Auth\Models\Users\Traits\Authentication\AuthenticationUserTrait;
-use ByTIC\Common\Records\Traits\Media\Generic\RecordTrait as MediaGenericTrait;
-use ByTIC\Common\Records\Traits\Media\Logos\RecordTrait as MediaLogosTrait;
 
 /**
  * Class AbstractUserTrait
@@ -12,11 +10,7 @@ use ByTIC\Common\Records\Traits\Media\Logos\RecordTrait as MediaLogosTrait;
  */
 trait AbstractUserTrait
 {
-    use MediaGenericTrait;
-    use MediaLogosTrait;
     use AuthenticationUserTrait;
-
-    protected $logoTypes = ['listing'];
 
     /**
      * @return string
