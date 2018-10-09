@@ -1,0 +1,33 @@
+{
+  "name": "bytic/auth",
+  "description": "Auth Classes used by ByTIC Framework",
+  "authors": [
+    {
+      "name": "Gabriel Solomon",
+      "email": "hello@gabrielsolomon.ro"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ByTIC\\Auth\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ByTIC\\Auth\\Tests\\": "tests/",
+      "ByTIC\\Auth\\Tests\\Fixtures\\": "tests/fixtures"
+    }
+  },
+  "require": {
+    "php": ">=5.5.0",
+    "bytic/orm": "^0.9",
+    "bytic/helpers": "^0.9",
+    "bytic/controllers": "^0.9",
+    "bytic/cookie": "^0.9"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "2.*",
+    "codeception/codeception": "2.2.*",
+    "codeception/mockery-module": "0.2.*"
+  }
+}
