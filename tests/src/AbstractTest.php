@@ -2,6 +2,7 @@
 
 namespace ByTIC\Auth\Tests;
 
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,4 +16,10 @@ abstract class AbstractTest extends TestCase
      * @var \UnitTester
      */
     protected $tester;
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+        Mockery::close();
+    }
 }

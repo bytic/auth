@@ -2,9 +2,9 @@
 
 namespace ByTIC\Auth\Models\Users\Traits\Authentication;
 
+use ByTIC\Auth\Models\Users\PersistentData\Engines\UserCookieEngine;
 use ByTIC\Auth\Models\Users\Traits\Authentication\AuthenticationUserTrait as User;
-use ByTIC\Auth\Models\Traits\PersistentCurrent;
-use Nip\Cookie\Jar as CookieJar;
+use ByTIC\PersistentData\PersistentManagerTrait;
 use Nip\HelperBroker;
 use Nip_Helper_Passwords as PasswordsHelper;
 
@@ -13,11 +13,11 @@ use Nip_Helper_Passwords as PasswordsHelper;
  * @package ByTIC\Common\Records\Users\Authentication
  *
  * @method User findOneByEmail($email)
+ * @method User getCurrent()
  */
 trait AuthenticationUsersTrait
 {
-    use PersistentCurrent;
-
+    use PersistentManagerTrait;
 
     /**
      * @param User $item
@@ -68,25 +68,18 @@ trait AuthenticationUsersTrait
     }
 
     /**
-     * @param User $user
-     */
-    public function savePersistCurrentCookie($user)
-    {
-        $varName = $this->getCurrentVarName();
-        $helper = $this->getPasswordHelper()->setSalt($user->salt);
-        $value = $user->id.':'.$helper->hash($user->password);
-        CookieJar::instance()->newCookie()
-                 ->setName($varName)
-                 ->setValue($value)
-                 ->save();
-    }
-
-
-    /**
      * @return \Nip\Helpers\AbstractHelper|PasswordsHelper
      */
     public function getPasswordHelper()
     {
         return HelperBroker::instance()->getByName('Passwords');
+    }
+
+    /**
+     * @return array
+     */
+    protected function getPersistentDataEnginesTypes()
+    {
+        return ['session', UserCookieEngine::class];
     }
 }

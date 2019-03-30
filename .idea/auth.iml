@@ -2,9 +2,10 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="ByTIC\Auth\Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="ByTIC\Auth\" />
       <sourceFolder url="file://$MODULE_DIR$/tests/fixtures" isTestSource="true" packagePrefix="ByTIC\Auth\Tests\Fixtures\" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/src" isTestSource="true" packagePrefix="ByTIC\Auth\Tests\" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/application" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/collections" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/config" />
@@ -12,6 +13,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/controllers" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/cookie" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/database" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/debug" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/dispatcher" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/filesystem" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/google-analytics" />
@@ -19,10 +21,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/http" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/inflector" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/orm" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/persistent-data" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/pipeline" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/profiler" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/request-detective" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/router" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/session" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/utility" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/container-interop/container-interop" />
@@ -64,13 +68,16 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/recursion-context" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/resource-operations" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/version" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/config" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/contracts" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/debug" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/event-dispatcher" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/filesystem" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/http-foundation" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/http-kernel" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-ctype" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/routing" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/webmozart/assert" />

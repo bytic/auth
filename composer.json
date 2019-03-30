@@ -10,20 +10,24 @@
   "autoload": {
     "psr-4": {
       "ByTIC\\Auth\\": "src/"
-    }
+    },
+    "classmap": [
+      "legacy"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
-      "ByTIC\\Auth\\Tests\\": "tests/",
+      "ByTIC\\Auth\\Tests\\": "tests/src",
       "ByTIC\\Auth\\Tests\\Fixtures\\": "tests/fixtures"
     }
   },
   "require": {
     "php": ">=5.5.0",
-    "bytic/orm": "^1.0",
-    "bytic/helpers": "^1.0",
     "bytic/controllers": "^1.0",
-    "bytic/cookie": "^1.0"
+    "bytic/cookie": "^1.0",
+    "bytic/helpers": "^1.0",
+    "bytic/orm": "^1.0",
+    "bytic/persistent-data": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.2",
