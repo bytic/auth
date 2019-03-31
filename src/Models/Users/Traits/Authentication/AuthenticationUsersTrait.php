@@ -36,38 +36,6 @@ trait AuthenticationUsersTrait
     }
 
     /**
-     * @return bool|\Nip\Records\Record|User
-     */
-    public function getFromCookie()
-    {
-        if (isset($_COOKIE['login'])) {
-            list($id, $password) = explode(":", $_COOKIE['login']);
-
-            /** @var User $user */
-            $user = $this->findOne(intval($id));
-            if ($user) {
-                if ($user->checkSaltedPassword($password)) {
-                    return $user;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function savePersistCurrentSession($user)
-    {
-        $varName = $this->getCurrentVarName();
-        $data = $user->toArray();
-        unset($data['_forms']);
-        unset($data['password_repeat']);
-        $_SESSION[$varName] = $data;
-    }
-
-    /**
      * @return \Nip\Helpers\AbstractHelper|PasswordsHelper
      */
     public function getPasswordHelper()
