@@ -23,10 +23,10 @@
   },
   "require": {
     "php": ">=5.5.0",
-    "bytic/controllers": "^1.0",
-    "bytic/cookie": "^1.0",
-    "bytic/helpers": "^1.0",
-    "bytic/orm": "^1.0",
+    "bytic/controllers": "^0.9|^1.0",
+    "bytic/cookie": "^0.9|^1.0",
+    "bytic/helpers": "^0.9|^1.0",
+    "bytic/orm": "^0.9|^1.0",
     "bytic/persistent-data": "^1.0"
   },
   "require-dev": {
