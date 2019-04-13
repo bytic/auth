@@ -19,13 +19,19 @@ class UserCookieEngine extends CookiesEngine
     protected function generateData()
     {
         $rawData = parent::generateData();
-        list($id, $password) = explode(":", $rawData);
+        if (strpos($rawData, ':')) {
+            list($id, $password) = explode(":", $rawData);
+        } else {
+            $id       = $rawData;
+            $password = '';
+        }
 
         return ['id' => $id, 'password' => $password];
     }
 
     /**
      * @param $model
+     *
      * @return bool
      */
     protected function validateModelFoundFromData($model)
@@ -41,11 +47,12 @@ class UserCookieEngine extends CookiesEngine
 
     /**
      * @param $data
+     *
      * @return bool|int
      */
     protected function parseDataForModelFindParams($data)
     {
-        if (!is_array($data) || !isset($data['id']) || empty($data['id'])) {
+        if ( ! is_array($data) || ! isset($data['id']) || empty($data['id'])) {
             return false;
         }
 
@@ -54,12 +61,13 @@ class UserCookieEngine extends CookiesEngine
 
     /**
      * @param Record|AuthenticationUserTrait $model
+     *
      * @return mixed
      */
     protected function generateDataFromModel($model)
     {
         $helper = $model->getManager()->getPasswordHelper()->setSalt($model->salt);
 
-        return $model->id.':'.$helper->hash($model->password);
+        return $model->id . ':' . $helper->hash($model->password);
     }
 }
