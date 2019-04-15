@@ -7,6 +7,9 @@ use ByTIC\Auth\Models\Users\Traits\Authentication\AuthenticationUserTrait;
 /**
  * Class AbstractUserTrait
  * @package ByTIC\Auth\Models\Users\Traits
+ *
+ * @property string $created
+ * @property string $modified
  */
 trait AbstractUserTrait
 {
@@ -48,12 +51,4 @@ trait AbstractUserTrait
         $this->modified = date(DATE_DB);
         return parent::update();
     }
-
-    public function getImage($type = 'default')
-    {
-        $hash = md5(strtolower(trim($this->email)));
-        $gravatarURL = 'http://www.gravatar.com/avatar/' . $hash;
-        return $type ? $gravatarURL : $gravatarURL;
-    }
-
 }

@@ -2,8 +2,17 @@ language: php
 
 php:
   - 7.1
+  - 7.2
+
+env:
+  - BYTIC_VERSION=1.0.*
+  - BYTIC_VERSION=0.9.*
 
 before_script:
+  - composer require "bytic/controllers:${BYTIC_VERSION}" --no-update
+  - composer require "bytic/cookie:${BYTIC_VERSION}" --no-update
+  - composer require "bytic/helpers:${BYTIC_VERSION}" --no-update
+  - composer require "bytic/orm:${BYTIC_VERSION}" --no-update
   - composer install --no-interaction
 
 script:
