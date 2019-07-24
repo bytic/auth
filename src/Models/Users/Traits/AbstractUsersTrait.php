@@ -3,6 +3,7 @@
 namespace ByTIC\Auth\Models\Users\Traits;
 
 use ByTIC\Auth\Models\Users\Traits\Authentication\AuthenticationUsersTrait;
+use ByTIC\Auth\Models\Users\Traits\Persistance\PersistentUsersTrait;
 
 /**
  * Class AbstractUsersTrait
@@ -11,4 +12,5 @@ use ByTIC\Auth\Models\Users\Traits\Authentication\AuthenticationUsersTrait;
 trait AbstractUsersTrait
 {
     use AuthenticationUsersTrait;
+    use PersistentUsersTrait;
 }
