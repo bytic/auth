@@ -28,6 +28,7 @@
     "bytic/helpers": "^0.9|^1.0",
     "bytic/orm": "^0.9|^1.0",
     "bytic/persistent-data": "^1.0",
+    "symfony/security": "^4.4",
     "lcobucci/jwt": "^3.3"
   },
   "require-dev": {
