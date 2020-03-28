@@ -3,6 +3,7 @@
 namespace ByTIC\Auth\Tests;
 
 use Mockery;
+use Nip\Container\Container;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,16 +11,18 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class AbstractTest extends TestCase
 {
-    protected $object;
+    protected function setUp()
+    {
+        parent::setUp();
 
-    /**
-     * @var \UnitTester
-     */
-    protected $tester;
+        Container::setInstance(new Container());
+        Container::getInstance()->set('inflector', \Nip\Inflector\Inflector::instance());
+    }
 
     protected function tearDown()
     {
         parent::tearDown();
+        Container::setInstance(null);
         Mockery::close();
     }
 }
