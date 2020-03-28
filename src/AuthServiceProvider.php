@@ -3,6 +3,8 @@
 namespace ByTIC\Auth;
 
 use Nip\Container\ServiceProviders\Providers\AbstractSignatureServiceProvider;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 /**
  * Class AuthServiceProvider
@@ -18,6 +20,8 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
     {
         $this->registerManager();
         $this->registerUserProvider();
+        $this->registerGuardHandler();
+        $this->registerTokenStorage();
     }
 
     protected function registerManager()
@@ -45,6 +49,26 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         );
     }
 
+    protected function registerGuardHandler()
+    {
+        $this->getContainer()->share(
+            'auth.guard_handler',
+            function () {
+                return new GuardAuthenticatorHandler($this->getContainer()->get('auth.token_storage'));
+            }
+        );
+    }
+
+    protected function registerTokenStorage()
+    {
+        $this->getContainer()->share(
+            'auth.token_storage',
+            function () {
+                return new TokenStorage();
+            }
+        );
+    }
+
     /**
      * @inheritdoc
      */
@@ -53,6 +77,8 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         return [
             'auth',
             'auth.user_provider',
+            'auth.token_storage',
+            'auth.guard_handler',
         ];
     }
 }

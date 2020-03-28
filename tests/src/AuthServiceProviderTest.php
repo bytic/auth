@@ -7,6 +7,8 @@ use ByTIC\Auth\AuthServiceProvider;
 use ByTIC\Auth\Security\Core\UserProvider\IdentifierUserProvider;
 use Nip\Config\Config;
 use Nip\Container\Container;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 /**
  * Class AuthJWTServiceProviderTest
@@ -29,6 +31,22 @@ class AuthServiceProviderTest extends AbstractTest
 
         $loader = $container->get('auth.user_provider');
         self::assertInstanceOf(IdentifierUserProvider::class, $loader);
+    }
+
+    public function test_registerTokenStorage()
+    {
+        $container = $this->initServiceProvider();
+
+        $storage = $container->get('auth.token_storage');
+        self::assertInstanceOf(TokenStorage::class, $storage);
+    }
+
+    public function test_registerGuardHandler()
+    {
+        $container = $this->initServiceProvider();
+
+        $handler = $container->get('auth.guard_handler');
+        self::assertInstanceOf(GuardAuthenticatorHandler::class, $handler);
     }
 
     /**
