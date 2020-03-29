@@ -2,15 +2,14 @@
 
 namespace ByTIC\Auth;
 
-use ByTIC\Auth\AuthManager\CanCreateUserProviders;
-
 /**
  * Class AuthManager
  * @package ByTIC\Auth
  */
 class AuthManager
 {
-    use CanCreateUserProviders;
+    use AuthManager\CanCreateUserProviders;
+    use AuthManager\CanCreateGuardAuthenticators;
 
     /**
      * Helper to get the config values.
