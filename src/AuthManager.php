@@ -10,6 +10,7 @@ class AuthManager
 {
     use AuthManager\CanCreateUserProviders;
     use AuthManager\CanCreateGuardAuthenticators;
+    use AuthManager\CanExecuteGuardAuthenticators;
 
     /**
      * Helper to get the config values.

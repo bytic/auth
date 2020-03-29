@@ -4,6 +4,7 @@ namespace ByTIC\Auth;
 
 use Nip\Container\ServiceProviders\Providers\AbstractSignatureServiceProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 /**
@@ -20,6 +21,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
     {
         $this->registerManager();
         $this->registerUserProvider();
+        $this->registerUserChecker();
         $this->registerGuardHandler();
         $this->registerTokenStorage();
     }
@@ -45,6 +47,21 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
             'auth.user_provider',
             function () {
                 return $this->getContainer()->get('auth')->userProvider();
+            }
+        );
+    }
+
+    /**
+     * Register a resolver for the authenticated user.
+     *
+     * @return void
+     */
+    protected function registerUserChecker()
+    {
+        $this->getContainer()->share(
+            'auth.user_checker',
+            function () {
+                return new UserChecker();
             }
         );
     }
@@ -77,6 +94,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         return [
             'auth',
             'auth.user_provider',
+            'auth.user_checker',
             'auth.token_storage',
             'auth.guard_handler',
         ];
