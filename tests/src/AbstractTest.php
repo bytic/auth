@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class AbstractTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -19,7 +19,7 @@ abstract class AbstractTest extends TestCase
         Container::getInstance()->set('inflector', \Nip\Inflector\Inflector::instance());
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         Container::setInstance(null);

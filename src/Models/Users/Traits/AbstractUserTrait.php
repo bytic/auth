@@ -29,7 +29,7 @@ trait AbstractUserTrait
     public function insert()
     {
         /** @noinspection PhpUndefinedConstantInspection */
-        $this->created = date(DATE_DB);
+        $this->created = date('Y-m-d');
 
         /** @noinspection PhpUndefinedClassInspection */
         return parent::insert();
@@ -48,7 +48,7 @@ trait AbstractUserTrait
 
     public function update()
     {
-        $this->modified = date(DATE_DB);
+        $this->modified = date('Y-m-d');
         return parent::update();
     }
 }

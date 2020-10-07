@@ -69,7 +69,7 @@ trait AuthenticationUserTrait
     public function doAuthentication()
     {
         /** @noinspection PhpUndefinedConstantInspection */
-        $this->last_login = date(DATE_DB);
+        $this->last_login = date('Y-m-d');
         $this->save();
 
         $this->authenticated(true);
