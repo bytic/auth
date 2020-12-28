@@ -4,13 +4,12 @@ namespace ByTIC\Auth\Tests\AuthManager;
 
 use ByTIC\Auth\AuthManager;
 use ByTIC\Auth\AuthServiceProvider;
-use ByTIC\Auth\Security\Guard\GuardAuthenticatorInvoker;
 use ByTIC\Auth\Tests\AbstractTest;
 use ByTIC\Auth\Tests\Fixtures\Security\Guard\AppCustomAuthenticator;
 use Mockery\Mock;
 use Nip\Config\Config;
-use Nip\Container\Container;
-use Nip\Request;
+use Nip\Container\Utility\Container;
+use Nip\Http\Request;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 /**
@@ -22,7 +21,7 @@ class CanExecuteGuardAuthenticatorsTest extends AbstractTest
 
     public function test_authRequestWith_return_false_on_not_supported_request()
     {
-        $container = Container::getInstance();
+        $container = Container::container();
         $container->set('config', new Config());
 //        $this->loadConfigIntoContainer('basic');
         $serviceProvider = new AuthServiceProvider();
@@ -39,7 +38,7 @@ class CanExecuteGuardAuthenticatorsTest extends AbstractTest
 
     public function test_authRequestWith()
     {
-        $container = Container::getInstance();
+        $container = Container::container();
         $container->set('config', new Config());
 //        $this->loadConfigIntoContainer('basic');
         $serviceProvider = new AuthServiceProvider();

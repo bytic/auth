@@ -2,7 +2,7 @@
 
 namespace ByTIC\Auth\Security\Guard;
 
-use Nip\Request;
+use Nip\Http\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;

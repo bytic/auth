@@ -15,6 +15,8 @@ abstract class AbstractTest extends TestCase
     {
         parent::setUp();
 
+        \Nip\Container\Utility\Container::container(true);
+
         Container::setInstance(new Container());
         Container::getInstance()->set('inflector', \Nip\Inflector\Inflector::instance());
     }

@@ -6,7 +6,7 @@ use ByTIC\Auth\AuthServiceProvider;
 use ByTIC\Auth\Security\Guard\Firewall\GuardListenerFactory;
 use ByTIC\Auth\Tests\AbstractTest;
 use Nip\Config\Config;
-use Nip\Container\Container;
+use Nip\Container\Utility\Container;
 use Symfony\Component\Security\Guard\Firewall\GuardAuthenticationListener;
 
 /**
@@ -17,7 +17,7 @@ class GuardListenerFactoryTest extends AbstractTest
 {
     public function test_create()
     {
-        $container = Container::getInstance();
+        $container = Container::container();
         $container->set('config', new Config());
 //        $this->loadConfigIntoContainer('basic');
         $serviceProvider = new AuthServiceProvider();

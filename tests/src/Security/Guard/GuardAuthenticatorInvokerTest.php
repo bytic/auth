@@ -7,8 +7,8 @@ use ByTIC\Auth\Security\Guard\GuardAuthenticatorInvoker;
 use ByTIC\Auth\Tests\AbstractTest;
 use ByTIC\Auth\Tests\Fixtures\Security\Guard\AppCustomAuthenticator;
 use Nip\Config\Config;
-use Nip\Container\Container;
-use Nip\Request;
+use Nip\Container\Utility\Container;
+use Nip\Http\Request;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 /**
@@ -41,7 +41,7 @@ class GuardAuthenticatorInvokerTest extends AbstractTest
 
     protected function initServiceProvider()
     {
-        $container = Container::getInstance();
+        $container = Container::container();
         $container->set('config', new Config());
 //        $this->loadConfigIntoContainer('basic');
         $serviceProvider = new AuthServiceProvider();

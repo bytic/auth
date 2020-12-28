@@ -6,7 +6,7 @@ use ByTIC\Auth\AuthManager;
 use ByTIC\Auth\AuthServiceProvider;
 use ByTIC\Auth\Security\Core\UserProvider\IdentifierUserProvider;
 use Nip\Config\Config;
-use Nip\Container\Container;
+use Nip\Container\Utility\Container;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
@@ -63,7 +63,7 @@ class AuthServiceProviderTest extends AbstractTest
      */
     protected function initServiceProvider()
     {
-        $container = Container::getInstance();
+        $container = Container::container();
 //        $this->loadConfigIntoContainer('basic');
         $serviceProvider = new AuthServiceProvider();
         $serviceProvider->setContainer($container);
