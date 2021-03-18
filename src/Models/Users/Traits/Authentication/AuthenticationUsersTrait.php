@@ -24,6 +24,10 @@ use Nip_Helper_Passwords as PasswordsHelper;
  */
 trait AuthenticationUsersTrait
 {
+    public function findOneByUsername($identifier)
+    {
+        return $this->findOneByField('email', $identifier);
+    }
 
     /**
      * @param string $tokenString

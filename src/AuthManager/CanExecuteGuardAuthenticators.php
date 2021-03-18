@@ -3,8 +3,6 @@
 namespace ByTIC\Auth\AuthManager;
 
 use ByTIC\Auth\Security\Guard\GuardAuthenticatorInvoker;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Symfony\Component\Security\Guard\Token\PreAuthenticationGuardToken;
 
 /**
  * Trait CanExecuteGuardAuthenticators
@@ -20,5 +18,15 @@ trait CanExecuteGuardAuthenticators
     public function authRequestWith($authenticator, $request)
     {
         return (new GuardAuthenticatorInvoker($authenticator, $request))();
+    }
+
+    /**
+     * @param $authenticator
+     * @param $request
+     * @return bool
+     */
+    public function authRequest($request)
+    {
+        return (new GuardAuthenticatorInvoker(null, $request))();
     }
 }

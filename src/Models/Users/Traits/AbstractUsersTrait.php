@@ -4,6 +4,7 @@ namespace ByTIC\Auth\Models\Users\Traits;
 
 use ByTIC\Auth\Models\Users\Traits\Authentication\AuthenticationUsersTrait;
 use ByTIC\Auth\Models\Users\Traits\Persistance\PersistentUsersTrait;
+use ByTIC\DataObjects\Behaviors\Timestampable\TimestampableManagerTrait;
 
 /**
  * Class AbstractUsersTrait
@@ -13,4 +14,5 @@ trait AbstractUsersTrait
 {
     use AuthenticationUsersTrait;
     use PersistentUsersTrait;
+    use TimestampableManagerTrait;
 }

@@ -34,16 +34,31 @@ class UsersResolvers
         return static::resolveEntity($userTable, $userIdentifier);
     }
 
+    /**
+     * @param string $identifier
+     * @return string
+     */
+    public static function resolveByUsername(string $identifier)
+    {
+        list($userTable, $userIdentifier) = static::parseIdentifier($identifier);
+
+        return static::resolveEntity($userTable, $userIdentifier, 'username');
+    }
+
 
     /**
      * @param $userTable
      * @param $userIdentifier
      * @return \Nip\Records\AbstractModels\Record
      */
-    protected static function resolveEntity($userTable, $userIdentifier)
+    protected static function resolveEntity($userTable, $userIdentifier, $field = null)
     {
         $userRepository = ModelLocator::get($userTable);
 
+        if (!empty($field)) {
+            $method = 'findOneBy'. ucfirst($field);
+            return $userRepository->$method($userIdentifier);
+        }
         return $userRepository->findOne($userIdentifier);
     }
 

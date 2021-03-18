@@ -4,18 +4,21 @@ namespace ByTIC\Auth\Security\Guard;
 
 use Nip\Http\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Guard\Token\PreAuthenticationGuardToken;
 use function get_class;
 use function gettype;
 use function is_object;
 
-/*
+/**
  * Class GuardAuthenticatorInvoker
  * @package ByTIC\Auth\Security\Guard
  */
@@ -42,6 +45,11 @@ class GuardAuthenticatorInvoker
     protected $userChecker;
 
     /**
+     * @var UserPasswordEncoder
+     */
+    protected $passwordEncoder;
+
+    /**
      * @var string
      */
     protected $providerKey;
@@ -60,6 +68,7 @@ class GuardAuthenticatorInvoker
         $this->userProvider = app('auth.user_provider');
         $this->userChecker = app('auth.user_checker');
         $this->providerKey = 'auth-'.get_class($this->getAuthenticator());
+        $this->passwordEncoder = new UserPasswordEncoder(app('auth.encoders_factory'));
     }
 
     /**
@@ -122,10 +131,21 @@ class GuardAuthenticatorInvoker
      */
     protected function checkUser($user, $token)
     {
+        $guardAuthenticator = $this->getAuthenticator();
         $this->userChecker->checkPreAuth($user);
-        if (true !== $this->getAuthenticator()->checkCredentials($token->getCredentials(), $user)) {
+
+        if (true !== $guardAuthenticator->checkCredentials($token->getCredentials(), $user)) {
             throw new BadCredentialsException(sprintf('Authentication failed because %s::checkCredentials() did not return true.',
                 get_class($this->getAuthenticator())));
+        }
+
+        if ($this->userProvider instanceof PasswordUpgraderInterface
+            && $guardAuthenticator instanceof PasswordAuthenticatedInterface
+            && null !== $this->passwordEncoder
+            && (null !== $password = $guardAuthenticator->getPassword($token->getCredentials()))
+            && method_exists($this->passwordEncoder, 'needsRehash')
+            && $this->passwordEncoder->needsRehash($user)) {
+            $this->userProvider->upgradePassword($user, $this->passwordEncoder->encodePassword($user, $password));
         }
         $this->userChecker->checkPostAuth($user);
     }

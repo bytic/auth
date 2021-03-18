@@ -3,6 +3,7 @@
 namespace ByTIC\Auth\Models\Users\Traits;
 
 use ByTIC\Auth\Models\Users\Traits\Authentication\AuthenticationUserTrait;
+use ByTIC\DataObjects\Behaviors\Timestampable\TimestampableTrait;
 
 /**
  * Class AbstractUserTrait
@@ -14,6 +15,17 @@ use ByTIC\Auth\Models\Users\Traits\Authentication\AuthenticationUserTrait;
 trait AbstractUserTrait
 {
     use AuthenticationUserTrait;
+    use TimestampableTrait;
+
+    /**
+     * @var string
+     */
+    static protected $createTimestamps = ['created'];
+
+    /**
+     * @var string
+     */
+    static protected $updateTimestamps = ['modified'];
 
     /**
      * @return string
@@ -23,16 +35,44 @@ trait AbstractUserTrait
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    /**
-     * @return mixed
-     */
-    public function insert()
+    public function getRoles()
     {
-        /** @noinspection PhpUndefinedConstantInspection */
-        $this->created = date('Y-m-d');
+        return [];
+    }
 
-        /** @noinspection PhpUndefinedClassInspection */
-        return parent::insert();
+    /**
+     * @return mixed|void|null
+     */
+    public function getPassword()
+    {
+        return $this->getAttribute('password');
+    }
+
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    /**
+     * @return mixed|void|null
+     */
+    public function getUsername()
+    {
+        return $this->getAttribute('username');
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @param $password
+     * @return void
+     */
+    public function setPassword(string $password)
+    {
+        return $this->setAttribute('password', $password);
     }
 
     /**
@@ -44,11 +84,5 @@ trait AbstractUserTrait
         $email->setItem($this);
 
         return $email->save();
-    }
-
-    public function update()
-    {
-        $this->modified = date('Y-m-d');
-        return parent::update();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace ByTIC\Auth\AuthManager;
 
+use ByTIC\Auth\Security\Guard\Authenticator\BaseAuthenticator;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 /**
@@ -20,8 +21,10 @@ trait CanCreateGuardAuthenticators
      * @return AbstractGuardAuthenticator
      * @noinspection PhpDocMissingThrowsInspection
      */
-    public function guardAuthenticator($authenticatorName)
+    public function guardAuthenticator($authenticatorName = null)
     {
+        $authenticatorName = $authenticatorName ?: $this->getDefaultGuardAuthenticator();
+
         if (empty($authenticatorName)) {
             /** @noinspection PhpUnhandledExceptionInspection */
             throw new \Exception("guardAuthenticator function need a name");
@@ -54,5 +57,13 @@ trait CanCreateGuardAuthenticators
         }
 
         return app()->get($authenticatorName);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDefaultGuardAuthenticator()
+    {
+        return $this->config('defaults.authenticator', BaseAuthenticator::class);
     }
 }

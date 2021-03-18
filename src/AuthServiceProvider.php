@@ -2,6 +2,8 @@
 
 namespace ByTIC\Auth;
 
+use ByTIC\Auth\Security\Core\Encoder\EncoderFactory;
+use Nip\Config\Config;
 use Nip\Container\ServiceProviders\Providers\AbstractSignatureServiceProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\User\UserChecker;
@@ -24,6 +26,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         $this->registerUserChecker();
         $this->registerGuardHandler();
         $this->registerTokenStorage();
+        $this->registerEncoderFactory();
     }
 
     protected function registerManager()
@@ -86,6 +89,24 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         );
     }
 
+    protected function registerEncoderFactory()
+    {
+        $this->getContainer()->share(
+            'auth.encoders_factory',
+            function () {
+                $encoders = config("auth.encoders", [
+                    \Symfony\Component\Security\Core\User\UserInterface::class => [
+                        'algorithm' => 'auto',
+                        'hash_algorithm' => 'sha256',
+                        'cost' => 12,
+                    ],
+                ]);
+
+                return new EncoderFactory($encoders instanceof Config ? $encoders->toArray() : $encoders);
+            }
+        );
+    }
+
     /**
      * @inheritdoc
      */
@@ -97,6 +118,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
             'auth.user_checker',
             'auth.token_storage',
             'auth.guard_handler',
+            'auth.encoders_factory',
         ];
     }
 }

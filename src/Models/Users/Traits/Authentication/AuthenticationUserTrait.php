@@ -2,9 +2,10 @@
 
 namespace ByTIC\Auth\Models\Users\Traits\Authentication;
 
+use ByTIC\Auth\Models\Users\Resolvers\UsersResolvers;
 use ByTIC\Auth\Models\Users\Traits\AbstractUserTrait as User;
-use Nip\HelperBroker;
-use Nip_Helper_Passwords as PasswordsHelper;
+use Nip\Http\Request;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 /**
  * Class AuthenticationUserTrait
@@ -25,45 +26,34 @@ use Nip_Helper_Passwords as PasswordsHelper;
  */
 trait AuthenticationUserTrait
 {
+    use \ByTIC\Auth\Legacy\Models\Users\AuthenticationUserTrait;
     protected $authenticated = false;
 
     /**
      * Authenticate user from request
      *
-     * @param array $request
+     * @param array $incomingRequest
      * @return bool|null
      */
-    public function authenticate($request = [])
+    public function authenticate($incomingRequest = [])
     {
-        if ($request) {
-            $this->email = clean($request['email']);
-            $this->password = $this->getPasswordHelper()->hash(clean($request['password']));
-        } else {
-            $this->password = $this->getPasswordHelper()->hash(clean($this->password));
-        }
+        $authRequest = new Request();
 
-        $query = $this->getManager()->newQuery();
+        $authRequest->request->set('_username',
+            $this->getManager()->getTable().UsersResolvers::SEPARATOR
+            .($incomingRequest ? clean($incomingRequest['email']) : $this->email));
+        $authRequest->request->set('_password',
+            $incomingRequest ? clean($incomingRequest['password']) : $this->password);
 
-        $query->where("email = ?", $this->email);
-        $query->where("password = ?", $this->password);
+        /** @var PostAuthenticationGuardToken $result */
+        $result = \auth()->authRequest($authRequest);
 
-        /** @var User $user */
-        $user = $this->getManager()->findOneByQuery($query);
-
-        if ($user) {
-            $this->writeData($user->toArray());
+        if ($result->isAuthenticated()) {
+            $this->writeData($result->getUser()->toArray());
             $this->doAuthentication();
         }
 
         return $this->authenticated();
-    }
-
-    /**
-     * @return PasswordsHelper
-     */
-    public function getPasswordHelper()
-    {
-        return HelperBroker::instance()->getByName('Passwords');
     }
 
     public function doAuthentication()
