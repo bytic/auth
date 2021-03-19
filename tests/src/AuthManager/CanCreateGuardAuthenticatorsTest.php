@@ -3,10 +3,12 @@
 namespace ByTIC\Auth\Tests\AuthManager;
 
 use ByTIC\Auth\AuthManager;
+use ByTIC\Auth\AuthServiceProvider;
 use ByTIC\Auth\Security\Guard\Authenticator\BaseAuthenticator;
 use ByTIC\Auth\Tests\AbstractTest;
 use ByTIC\Auth\Tests\Fixtures\Security\Guard\AppCustomAuthenticator;
 use Mockery\Mock;
+use Nip\Container\Container;
 
 /**
  * Class CanCreateGuardAuthenticatorsTest
@@ -19,7 +21,7 @@ class CanCreateGuardAuthenticatorsTest extends AbstractTest
     {
         /** @var AuthManager|Mock $manager */
         $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
-
+        Container::getInstance()->set(AuthServiceProvider::ENCODERS_FACTORY, '');
         $authenticator = $manager->guardAuthenticator();
 
         self::assertInstanceOf(BaseAuthenticator::class, $authenticator);

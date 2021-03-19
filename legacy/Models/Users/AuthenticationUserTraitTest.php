@@ -20,4 +20,17 @@ trait AuthenticationUserTrait
     {
         return HelperBroker::instance()->getByName('Passwords');
     }
+
+    /**
+     * @param $password
+     * @return bool
+     * @deprecated
+     */
+    public function checkSaltedPassword($password)
+    {
+        $helper = $this->getPasswordHelper()->setSalt($this->salt);
+        $helper->hash($this->password);
+
+        return $password == $helper->hash($this->password);
+    }
 }

@@ -2,11 +2,11 @@
 
 namespace ByTIC\Auth\Security\Guard\Authenticator;
 
+use ByTIC\Auth\Utility\Encoder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
@@ -25,7 +25,7 @@ class BaseAuthenticator extends AbstractGuardAuthenticator implements PasswordAu
 
     public function __construct()
     {
-        $this->encoderFactory = app('auth.encoders_factory');
+        $this->encoderFactory = Encoder::factory();
     }
 
     /**

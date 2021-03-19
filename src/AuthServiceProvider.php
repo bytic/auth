@@ -6,6 +6,7 @@ use ByTIC\Auth\Security\Core\Encoder\EncoderFactory;
 use Nip\Config\Config;
 use Nip\Container\ServiceProviders\Providers\AbstractSignatureServiceProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
@@ -15,6 +16,8 @@ use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
  */
 class AuthServiceProvider extends AbstractSignatureServiceProvider
 {
+    public const ENCODERS_FACTORY = 'auth.encoders_factory';
+    public const ENCODER = 'auth.encoder';
 
     /**
      * @inheritdoc
@@ -27,6 +30,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         $this->registerGuardHandler();
         $this->registerTokenStorage();
         $this->registerEncoderFactory();
+        $this->registerEncoder();
     }
 
     protected function registerManager()
@@ -92,7 +96,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
     protected function registerEncoderFactory()
     {
         $this->getContainer()->share(
-            'auth.encoders_factory',
+            self::ENCODERS_FACTORY,
             function () {
                 $encoders = config("auth.encoders", [
                     \Symfony\Component\Security\Core\User\UserInterface::class => [
@@ -103,6 +107,16 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
                 ]);
 
                 return new EncoderFactory($encoders instanceof Config ? $encoders->toArray() : $encoders);
+            }
+        );
+    }
+
+    protected function registerEncoder()
+    {
+        $this->getContainer()->share(
+            self::ENCODER,
+            function () {
+                return new UserPasswordEncoder(app('auth.encoders_factory'));
             }
         );
     }
@@ -118,7 +132,9 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
             'auth.user_checker',
             'auth.token_storage',
             'auth.guard_handler',
-            'auth.encoders_factory',
+            'auth.provider_manager',
+            self::ENCODERS_FACTORY,
+            self::ENCODER,
         ];
     }
 }

@@ -4,7 +4,9 @@ namespace ByTIC\Auth\Models\Users\Traits\Authentication;
 
 use ByTIC\Auth\Models\Users\Resolvers\UsersResolvers;
 use ByTIC\Auth\Models\Users\Traits\AbstractUserTrait as User;
+use ByTIC\Auth\Utility\Encoder;
 use Nip\Http\Request;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 /**
@@ -45,12 +47,15 @@ trait AuthenticationUserTrait
         $authRequest->request->set('_password',
             $incomingRequest ? clean($incomingRequest['password']) : $this->password);
 
-        /** @var PostAuthenticationGuardToken $result */
-        $result = \auth()->authRequest($authRequest);
+        try {
+            /** @var PostAuthenticationGuardToken $result */
+            $result = \auth()->authRequest($authRequest);
 
-        if ($result->isAuthenticated()) {
-            $this->writeData($result->getUser()->toArray());
-            $this->doAuthentication();
+            if ($result->isAuthenticated()) {
+                $this->writeData($result->getUser()->toArray());
+                $this->doAuthentication();
+            }
+        } catch (AuthenticationException $exception) {
         }
 
         return $this->authenticated();
@@ -98,16 +103,23 @@ trait AuthenticationUserTrait
     {
         $this->new_password = $this->password;
 
-//        $this->generateSalt();
         $this->hashPassword();
         $this->insert();
 
         return $this;
     }
 
-    public function hashPassword()
+    /**
+     * @param null|string $newPassword
+     * @return string
+     */
+    public function hashPassword($newPassword = null): string
     {
-        $this->password = $this->getPasswordHelper()->hash($this->new_password);
+        $newPassword = $newPassword === null ? $this->new_password : $newPassword;
+        $hashed = Encoder::encoder()->encodePassword($this, $this->new_password);
+        $this->password = $hashed;
+
+        return $hashed;
     }
 
     /**
@@ -118,18 +130,6 @@ trait AuthenticationUserTrait
         $this->salt = md5(uniqid("", true));
 
         return $this;
-    }
-
-    /**
-     * @param $password
-     * @return bool
-     */
-    public function checkSaltedPassword($password)
-    {
-        $helper = $this->getPasswordHelper()->setSalt($this->salt);
-        $helper->hash($this->password);
-
-        return $password == $helper->hash($this->password);
     }
 
     /**
