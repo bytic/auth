@@ -61,6 +61,11 @@ trait AbstractUserTrait
         return $this->getAttribute('username');
     }
 
+    public function getUserIdentifier()
+    {
+        return $this->getAttribute('email');
+    }
+
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
