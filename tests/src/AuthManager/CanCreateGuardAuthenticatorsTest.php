@@ -4,6 +4,7 @@ namespace ByTIC\Auth\Tests\AuthManager;
 
 use ByTIC\Auth\AuthManager;
 use ByTIC\Auth\AuthServiceProvider;
+use ByTIC\Auth\Security\Authenticator\JwtAuthenticator;
 use ByTIC\Auth\Security\Guard\Authenticator\BaseAuthenticator;
 use ByTIC\Auth\Tests\AbstractTest;
 use ByTIC\Auth\Tests\Fixtures\Security\Guard\AppCustomAuthenticator;
@@ -53,5 +54,18 @@ class CanCreateGuardAuthenticatorsTest extends AbstractTest
         self::assertInstanceOf(AppCustomAuthenticator::class, $authenticator1);
         self::assertInstanceOf(AppCustomAuthenticator::class, $authenticator2);
         self::assertTrue($authenticator2->singleton);
+    }
+
+    public function test_guardAuthenticator_fromConfig()
+    {
+        /** @var AuthManager|Mock $manager */
+        $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
+        $manager->shouldReceive('config')->with('authenticators.jwt')->once()->andReturn(
+            ['class' => \ByTIC\Auth\Security\Authenticator\JwtAuthenticator::class]
+        );
+
+        $authenticator = $manager->guardAuthenticator('jwt');
+
+        self::assertInstanceOf(JwtAuthenticator::class, $authenticator);
     }
 }

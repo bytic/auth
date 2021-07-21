@@ -33,6 +33,7 @@
     "bytic/persistent-data": "^1.0",
     "symfony/security-core": "^4.4|^5.0",
     "symfony/security-guard": "^4.4|^5.0",
+    "lexik/jwt-authentication-bundle": "^2.12",
     "lcobucci/jwt": "^4.1"
   },
   "require-dev": {

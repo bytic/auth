@@ -16,4 +16,16 @@ return [
             'model' => null,
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authenticators
+    |--------------------------------------------------------------------------
+    |
+    */
+    'authenticators' => [
+        'jwt' => [
+            'class' => \ByTIC\Auth\Security\Authenticator\JwtAuthenticator::class
+        ]
+    ],
 ];

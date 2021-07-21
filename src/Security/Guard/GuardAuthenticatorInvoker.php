@@ -14,6 +14,8 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Guard\Token\PreAuthenticationGuardToken;
+use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
+
 use function get_class;
 use function gettype;
 use function is_object;
@@ -64,6 +66,7 @@ class GuardAuthenticatorInvoker
         $this->setAuthenticator(
             is_object($authenticator) ? $authenticator : app('auth')->guardAuthenticator($authenticator)
         );
+
         $this->setRequest($request);
         $this->userProvider = app('auth.user_provider');
         $this->userChecker = app('auth.user_checker');
@@ -200,7 +203,7 @@ class GuardAuthenticatorInvoker
     /**
      * @param AbstractGuardAuthenticator $authenticator
      */
-    protected function setAuthenticator(AbstractGuardAuthenticator $authenticator)
+    protected function setAuthenticator(AuthenticatorInterface $authenticator)
     {
         $this->authenticator = $authenticator;
     }
@@ -208,7 +211,7 @@ class GuardAuthenticatorInvoker
     /**
      * @return AbstractGuardAuthenticator
      */
-    public function getAuthenticator(): AbstractGuardAuthenticator
+    public function getAuthenticator(): AuthenticatorInterface
     {
         return $this->authenticator;
     }
@@ -216,7 +219,7 @@ class GuardAuthenticatorInvoker
     /**
      * @return Request
      */
-    public function getRequest(): Request
+    public function getRequest(): \Symfony\Component\HttpFoundation\Request
     {
         return $this->request;
     }
@@ -224,7 +227,7 @@ class GuardAuthenticatorInvoker
     /**
      * @param Request $request
      */
-    public function setRequest(Request $request)
+    public function setRequest(\Symfony\Component\HttpFoundation\Request $request)
     {
         $this->request = $request;
     }

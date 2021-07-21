@@ -36,30 +36,7 @@ trait AuthenticationUsersTrait
      */
     public function authenticateWithToken($tokenString, $key = null)
     {
-        $key = $key ? $key : (app()->has('oauth.keys.public') ? app('oauth.keys.public') : null);
-        if (empty($key)) {
-            throw new \Exception("You need to define oauth keys in container [oauth.keys.public]");
-        }
-
-        $jwtConfiguration = Configuration::forSymmetricSigner(
-            new Sha256(),
-            InMemory::plainText('')
-        );
-
-        $jwtConfiguration->setValidationConstraints(
-            new LooseValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
-            new SignedWith(new Sha256(), InMemory::plainText($key))
-        );
-
-        $token = $jwtConfiguration->parser()->parse($tokenString);
-        if (!($token instanceof Plain)) {
-            throw new \Exception("Invalid oauth Token");
-        }
-
-        $constraints = $jwtConfiguration->validationConstraints();
-        if (!$jwtConfiguration->validator()->validate($token, ...$constraints)) {
-            throw new \Exception('No way!');
-        }
+        $token = auth()->jwtManager()->parse($tokenString, $key);
 
         $claims = $token->claims();
         $entity = UsersResolvers::resolve($claims->get('sub'));

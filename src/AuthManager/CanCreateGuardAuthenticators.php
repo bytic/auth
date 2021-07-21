@@ -3,6 +3,7 @@
 namespace ByTIC\Auth\AuthManager;
 
 use ByTIC\Auth\Security\Guard\Authenticator\BaseAuthenticator;
+use InvalidArgumentException;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 /**
@@ -56,7 +57,15 @@ trait CanCreateGuardAuthenticators
             return app()->get($key);
         }
 
-        return app()->get($authenticatorName);
+        $config = $this->config('authenticators.'.$authenticatorName)->toArray();
+        if (is_null($config)) {
+            throw new InvalidArgumentException("Auth guard [{$authenticatorName}] is not defined.");
+        }
+
+        $config = is_array($config) ? $config:  ['class' => $config];
+        $authenticatorClass = (string) $config['class'];
+
+        return app()->get($authenticatorClass);
     }
 
     /**

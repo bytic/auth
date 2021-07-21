@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class AbstractTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -22,7 +22,19 @@ abstract class AbstractTest extends TestCase
         $container->set('config', new Config());
     }
 
-    protected function tearDown() : void
+    /**
+     * @param string $name
+     */
+    protected function loadConfigIntoContainer($name)
+    {
+        $container = \Nip\Container\Utility\Container::container(true);
+        $path = TEST_FIXTURE_PATH . '/config/' . $name . '.php';
+        $data = require $path;
+        $container->set('config', new Config(['auth' => $data]));
+    }
+
+
+    protected function tearDown(): void
     {
         parent::tearDown();
         Container::setInstance(null);

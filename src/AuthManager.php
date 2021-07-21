@@ -2,6 +2,8 @@
 
 namespace ByTIC\Auth;
 
+use ByTIC\Auth\Services\JWTManager;
+
 /**
  * Class AuthManager
  * @package ByTIC\Auth
@@ -11,6 +13,14 @@ class AuthManager
     use AuthManager\CanCreateUserProviders;
     use AuthManager\CanCreateGuardAuthenticators;
     use AuthManager\CanExecuteGuardAuthenticators;
+
+    /**
+     * @return JWTManager
+     */
+    public function jwtManager(): JWTManager
+    {
+        return app(AuthServiceProvider::JWT_MANAGER);
+    }
 
     /**
      * Helper to get the config values.

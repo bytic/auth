@@ -21,7 +21,6 @@ trait CanExecuteGuardAuthenticators
     }
 
     /**
-     * @param $authenticator
      * @param $request
      * @return bool
      */

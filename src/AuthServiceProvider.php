@@ -3,6 +3,7 @@
 namespace ByTIC\Auth;
 
 use ByTIC\Auth\Security\Core\Encoder\EncoderFactory;
+use ByTIC\Auth\Services\JWTManager;
 use Nip\Config\Config;
 use Nip\Container\ServiceProviders\Providers\AbstractSignatureServiceProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
@@ -18,6 +19,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
 {
     public const ENCODERS_FACTORY = 'auth.encoders_factory';
     public const ENCODER = 'auth.encoder';
+    public const JWT_MANAGER = 'auth.jwt.manager';
 
     /**
      * @inheritdoc
@@ -31,6 +33,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         $this->registerTokenStorage();
         $this->registerEncoderFactory();
         $this->registerEncoder();
+        $this->registerJwtManager();
     }
 
     protected function registerManager()
@@ -121,6 +124,16 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         );
     }
 
+    protected function registerJwtManager()
+    {
+        $this->getContainer()->share(
+            self::JWT_MANAGER,
+            function () {
+                return new JWTManager();
+            }
+        );
+    }
+
     /**
      * @inheritdoc
      */
@@ -135,6 +148,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
             'auth.provider_manager',
             self::ENCODERS_FACTORY,
             self::ENCODER,
+            self::JWT_MANAGER,
         ];
     }
 }

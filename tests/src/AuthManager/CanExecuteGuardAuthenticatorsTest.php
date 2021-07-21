@@ -55,4 +55,23 @@ class CanExecuteGuardAuthenticatorsTest extends AbstractTest
         $result = $manager->authRequestWith(AppCustomAuthenticator::class, $request);
         self::assertInstanceOf(PostAuthenticationGuardToken::class, $result);
     }
+
+    public function test_authRequestWith_jwt()
+    {
+        $container = Container::container();
+        $this->loadConfigIntoContainer('basic');
+
+        $serviceProvider = new AuthServiceProvider();
+        $serviceProvider->setContainer($container);
+        $serviceProvider->register();
+
+        $request = new \Symfony\Component\HttpFoundation\Request();
+        $request->headers->set('Authorization', 'Bearer testtoken');
+
+        /** @var AuthManager|Mock $manager */
+        $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
+
+        $result = $manager->authRequestWith('jwt', $request);
+        self::assertInstanceOf(PostAuthenticationGuardToken::class, $result);
+    }
 }
