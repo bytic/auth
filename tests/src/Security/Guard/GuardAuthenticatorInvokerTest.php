@@ -23,7 +23,7 @@ class GuardAuthenticatorInvokerTest extends AbstractTest
 
         $request = new Request();
 
-        $result = (new GuardAuthenticatorInvoker(AppCustomAuthenticator::class, $request))();
+        $result = (new GuardAuthenticatorInvoker(new AppCustomAuthenticator(), $request))();
         self::assertFalse($result);
     }
 
@@ -35,7 +35,7 @@ class GuardAuthenticatorInvokerTest extends AbstractTest
         $request->request->set('_username', 'john');
         $request->request->set('_password', '123456');
 
-        $result = (new GuardAuthenticatorInvoker(AppCustomAuthenticator::class, $request))();
+        $result = (new GuardAuthenticatorInvoker(new AppCustomAuthenticator(), $request))();
         self::assertInstanceOf(PostAuthenticationGuardToken::class, $result);
     }
 

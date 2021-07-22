@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Symfony\Component\Security\Http\Authentication\AuthenticatorManager;
 
 /**
  * Class AuthServiceProvider
@@ -17,9 +18,30 @@ use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
  */
 class AuthServiceProvider extends AbstractSignatureServiceProvider
 {
+    public const USER_PROVIDER = 'auth.user_provider';
     public const ENCODERS_FACTORY = 'auth.encoders_factory';
     public const ENCODER = 'auth.encoder';
     public const JWT_MANAGER = 'auth.jwt.manager';
+    public const AUTHENTICATOR_MANAGER = 'security.authenticator.manager';
+
+    /**
+     * @inheritdoc
+     */
+    public function provides()
+    {
+        return [
+            'auth',
+            'auth.user_provider',
+            'auth.user_checker',
+            'auth.token_storage',
+            'auth.guard_handler',
+            'auth.provider_manager',
+            self::ENCODERS_FACTORY,
+            self::ENCODER,
+            self::JWT_MANAGER,
+            self::AUTHENTICATOR_MANAGER,
+        ];
+    }
 
     /**
      * @inheritdoc
@@ -33,6 +55,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         $this->registerTokenStorage();
         $this->registerEncoderFactory();
         $this->registerEncoder();
+        $this->registerAuthenticatorManager();
         $this->registerJwtManager();
     }
 
@@ -54,7 +77,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
     protected function registerUserProvider()
     {
         $this->getContainer()->share(
-            'auth.user_provider',
+            self::USER_PROVIDER,
             function () {
                 return $this->getContainer()->get('auth')->userProvider();
             }
@@ -134,21 +157,17 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function provides()
+    protected function registerAuthenticatorManager()
     {
-        return [
-            'auth',
-            'auth.user_provider',
-            'auth.user_checker',
-            'auth.token_storage',
-            'auth.guard_handler',
-            'auth.provider_manager',
-            self::ENCODERS_FACTORY,
-            self::ENCODER,
-            self::JWT_MANAGER,
-        ];
+//        $this->getContainer()->share(
+//            self::AUTHENTICATOR_MANAGER,
+//            function () {
+//                $authenticators = [];
+//                return new AuthenticatorManager(
+//                    $authenticators,
+//                    app('events'),
+//                );
+//            }
+//        );
     }
 }

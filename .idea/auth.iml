@@ -157,6 +157,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/security-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/iso3166" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/namshi/jose" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/bytic/event-dispatcher" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/jetbrains/phpstorm-stubs" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/fig/event-dispatcher-util" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/roave/better-reflection" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/roave/signature" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/league/event" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

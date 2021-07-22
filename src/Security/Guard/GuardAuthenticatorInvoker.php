@@ -14,7 +14,8 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Guard\Token\PreAuthenticationGuardToken;
-use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
+
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 
 use function get_class;
 use function gettype;
@@ -63,9 +64,7 @@ class GuardAuthenticatorInvoker
      */
     public function __construct($authenticator, $request)
     {
-        $this->setAuthenticator(
-            is_object($authenticator) ? $authenticator : app('auth')->guardAuthenticator($authenticator)
-        );
+        $this->setAuthenticator($authenticator);
 
         $this->setRequest($request);
         $this->userProvider = app('auth.user_provider');
@@ -87,131 +86,128 @@ class GuardAuthenticatorInvoker
      */
     public function run()
     {
-        if ($this->canRun() === false) {
+        if ($this->supports() === false) {
             return false;
         }
-
-        $user = $this->getUser();
-        return $this->createAuthenticatedToken($user);
+        $authenticator = $this->getAuthenticator();
+        if ($authenticator instanceof AbstractGuardAuthenticator) {
+            return $this->executeGuardAuthenticator($authenticator);
+        }
+        return $this->executeAuthenticator($authenticator);
     }
 
     /**
      * @return bool
      */
-    protected function canRun()
+    protected function supports()
     {
         return $this->getAuthenticator()->supports($this->getRequest());
     }
 
-    /**
-     * @return UserInterface|null
-     */
-    protected function getUser()
+    protected function executeAuthenticator(AbstractAuthenticator $authenticator)
     {
-        $token = $this->getPreToken();
+        // get the passport from the Authenticator
+        $passport = $authenticator->authenticate($this->getRequest());
 
-        // get the user from the GuardAuthenticator
-        $user = $this->getAuthenticator()->getUser($token->getCredentials(), app('auth.user_provider'));
+        // create the authenticated token
+        $authenticatedToken = $authenticator->createAuthenticatedToken($passport, 'main');
 
-        if (null === $user) {
-            throw new UsernameNotFoundException(sprintf('Null returned from %s::getUser()',
-                get_class($this->getAuthenticator())));
-        }
-
-        if (!$user instanceof UserInterface) {
-            throw new \UnexpectedValueException(sprintf('The %s::getUser() method must return a UserInterface. You returned %s.',
-                get_class($this->getAuthenticator()), is_object($user) ? get_class($user) : gettype($user)));
-        }
-
-        $this->checkUser($user, $token);
-
-        return $user;
-    }
-
-    /**
-     * @param UserInterface $user
-     * @param PreAuthenticationGuardToken $token
-     */
-    protected function checkUser($user, $token)
-    {
-        $guardAuthenticator = $this->getAuthenticator();
-        $this->userChecker->checkPreAuth($user);
-
-        if (true !== $guardAuthenticator->checkCredentials($token->getCredentials(), $user)) {
-            throw new BadCredentialsException(sprintf('Authentication failed because %s::checkCredentials() did not return true.',
-                get_class($this->getAuthenticator())));
-        }
-
-        if ($this->userProvider instanceof PasswordUpgraderInterface
-            && $guardAuthenticator instanceof PasswordAuthenticatedInterface
-            && null !== $this->passwordEncoder
-            && (null !== $password = $guardAuthenticator->getPassword($token->getCredentials()))
-            && method_exists($this->passwordEncoder, 'needsRehash')
-            && $this->passwordEncoder->needsRehash($user)) {
-            $this->userProvider->upgradePassword($user, $this->passwordEncoder->encodePassword($user, $password));
-        }
-        $this->userChecker->checkPostAuth($user);
-    }
-
-    /**
-     * @param $user
-     * @return \Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken
-     */
-    protected function createAuthenticatedToken($user)
-    {
-        // turn the UserInterface into a TokenInterface
-        $authenticatedToken = $this->getAuthenticator()->createAuthenticatedToken($user, $this->providerKey);
-        if (!$authenticatedToken instanceof TokenInterface) {
-            throw new \UnexpectedValueException(sprintf('The %s::createAuthenticatedToken() method must return a TokenInterface. You returned %s.',
-                get_class($this->getAuthenticator()),
-                is_object($authenticatedToken) ? get_class($authenticatedToken) : gettype($authenticatedToken)));
-        }
+        $authenticatedToken->eraseCredentials();
 
         return $authenticatedToken;
     }
 
 
     /**
-     * @return PreAuthenticationGuardToken
+     * @return UserInterface|null
      */
-    protected function getPreToken()
-    {
-        $credentials = $this->getCredentials();
-
-        // create a token with the unique key, so that the provider knows which authenticator to use
-        $token = new PreAuthenticationGuardToken($credentials, $this->providerKey);
-
-        return $token;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getCredentials()
+    protected function executeGuardAuthenticator($authenticator)
     {
         // allow the authenticator to fetch authentication info from the request
         $credentials = $this->getAuthenticator()->getCredentials($this->getRequest());
 
         if (null === $credentials) {
-            throw new \UnexpectedValueException(sprintf('The return value of "%1$s::getCredentials()" must not be null. Return false from "%1$s::supports()" instead.',
-                get_class($this->getAuthenticator())));
+            throw new \UnexpectedValueException(
+                sprintf(
+                    'The return value of "%1$s::getCredentials()" must not be null. Return false from "%1$s::supports()" instead.',
+                    get_class($this->getAuthenticator())
+                )
+            );
         }
 
-        return $credentials;
+        // create a token with the unique key, so that the provider knows which authenticator to use
+        $token = new PreAuthenticationGuardToken($credentials, $this->providerKey);
+
+        // get the user from the GuardAuthenticator
+        $user = $authenticator->getUser($token->getCredentials(), app('auth.user_provider'));
+
+        if (null === $user) {
+            throw new UsernameNotFoundException(
+                sprintf(
+                    'Null returned from %s::getUser()',
+                    get_class($authenticator)
+                )
+            );
+        }
+
+        if (!$user instanceof UserInterface) {
+            throw new \UnexpectedValueException(
+                sprintf(
+                    'The %s::getUser() method must return a UserInterface. You returned %s.',
+                    get_class($this->getAuthenticator()),
+                    is_object($user) ? get_class($user) : gettype($user)
+                )
+            );
+        }
+
+        $this->userChecker->checkPreAuth($user);
+
+        if (true !== $authenticator->checkCredentials($token->getCredentials(), $user)) {
+            throw new BadCredentialsException(
+                sprintf(
+                    'Authentication failed because %s::checkCredentials() did not return true.',
+                    get_class($this->getAuthenticator())
+                )
+            );
+        }
+
+        if ($this->userProvider instanceof PasswordUpgraderInterface
+            && $authenticator instanceof PasswordAuthenticatedInterface
+            && null !== $this->passwordEncoder
+            && (null !== $password = $authenticator->getPassword($token->getCredentials()))
+            && method_exists($this->passwordEncoder, 'needsRehash')
+            && $this->passwordEncoder->needsRehash($user)) {
+            $this->userProvider->upgradePassword($user, $this->passwordEncoder->encodePassword($user, $password));
+        }
+        $this->userChecker->checkPostAuth($user);
+
+        // turn the UserInterface into a TokenInterface
+        $authenticatedToken = $authenticator->createAuthenticatedToken($user, $this->providerKey);
+        if (!$authenticatedToken instanceof TokenInterface) {
+            throw new \UnexpectedValueException(
+                sprintf(
+                    'The %s::createAuthenticatedToken() method must return a TokenInterface. You returned %s.',
+                    get_class($this->getAuthenticator()),
+                    is_object($authenticatedToken) ? get_class($authenticatedToken) : gettype($authenticatedToken)
+                )
+            );
+        }
+
+        return $authenticatedToken;
     }
 
     /**
      * @param AbstractGuardAuthenticator $authenticator
      */
-    protected function setAuthenticator(AuthenticatorInterface $authenticator)
+    protected function setAuthenticator($authenticator)
     {
         $this->authenticator = $authenticator;
     }
 
     /**
-     * @return AbstractGuardAuthenticator
+     * @return AbstractGuardAuthenticator|AbstractAuthenticator
      */
-    public function getAuthenticator(): AuthenticatorInterface
+    public function getAuthenticator()
     {
         return $this->authenticator;
     }

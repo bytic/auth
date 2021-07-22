@@ -49,7 +49,7 @@ trait AuthenticationUserTrait
 
         try {
             /** @var PostAuthenticationGuardToken $result */
-            $result = \auth()->authRequest($authRequest);
+            $result = \auth()->authenticateRequest($authRequest);
 
             if ($result->isAuthenticated()) {
                 $this->writeData($result->getUser()->toArray());

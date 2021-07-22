@@ -5,10 +5,10 @@ namespace ByTIC\Auth\AuthManager;
 use ByTIC\Auth\Security\Guard\GuardAuthenticatorInvoker;
 
 /**
- * Trait CanExecuteGuardAuthenticators
+ * Trait CanExecuteAuthenticators
  * @package ByTIC\Auth\AuthManager
  */
-trait CanExecuteGuardAuthenticators
+trait CanExecuteAuthenticators
 {
     /**
      * @param $authenticator
@@ -17,6 +17,7 @@ trait CanExecuteGuardAuthenticators
      */
     public function authRequestWith($authenticator, $request)
     {
+        $authenticator = is_object($authenticator) ? $authenticator : $this->guardAuthenticator($authenticator);
         return (new GuardAuthenticatorInvoker($authenticator, $request))();
     }
 
@@ -24,8 +25,9 @@ trait CanExecuteGuardAuthenticators
      * @param $request
      * @return bool
      */
-    public function authRequest($request)
+    public function authenticateRequest($request)
     {
-        return (new GuardAuthenticatorInvoker(null, $request))();
+        $authenticator = $this->guardAuthenticator();
+        return (new GuardAuthenticatorInvoker($authenticator, $request))();
     }
 }

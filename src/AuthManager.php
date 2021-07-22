@@ -11,8 +11,8 @@ use ByTIC\Auth\Services\JWTManager;
 class AuthManager
 {
     use AuthManager\CanCreateUserProviders;
-    use AuthManager\CanCreateGuardAuthenticators;
-    use AuthManager\CanExecuteGuardAuthenticators;
+    use AuthManager\CanCreateAuthenticators;
+    use AuthManager\CanExecuteAuthenticators;
 
     /**
      * @return JWTManager

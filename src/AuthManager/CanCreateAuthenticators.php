@@ -4,18 +4,20 @@ namespace ByTIC\Auth\AuthManager;
 
 use ByTIC\Auth\Security\Guard\Authenticator\BaseAuthenticator;
 use InvalidArgumentException;
+use Nip\Config\Config;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Guard\Authenticator\GuardBridgeAuthenticator;
 
 /**
  * Trait CanCreateGuardAuthenticators
  * @package ByTIC\Auth\AuthManager
  */
-trait CanCreateGuardAuthenticators
+trait CanCreateAuthenticators
 {
     /**
      * @var AbstractGuardAuthenticator[]
      */
-    protected $guardAuthenticators = [];
+    protected $authenticators = [];
 
     /**
      * @param null $authenticatorName
@@ -31,15 +33,19 @@ trait CanCreateGuardAuthenticators
             throw new \Exception("guardAuthenticator function need a name");
         }
 
-        if (!isset($this->guardAuthenticators[$authenticatorName])) {
+        if (!isset($this->authenticators[$authenticatorName])) {
             $authenticator = $this->createGuardAuthenticator($authenticatorName);
-            $this->guardAuthenticators[$authenticatorName] = $authenticator ?: false;
+
+//            if ($authenticator instanceof AbstractGuardAuthenticator) {
+//                $authenticator = new GuardBridgeAuthenticator($authenticator, $this->userProvider());
+//            }
+            $this->authenticators[$authenticatorName] = $authenticator ?: false;
             if (is_object($authenticator)) {
-                $this->guardAuthenticators[get_class($authenticator)] = $authenticator;
+                $this->authenticators[get_class($authenticator)] = $authenticator;
             }
         }
 
-        return $this->guardAuthenticators[$authenticatorName];
+        return $this->authenticators[$authenticatorName];
     }
 
     /**
@@ -57,7 +63,8 @@ trait CanCreateGuardAuthenticators
             return app()->get($key);
         }
 
-        $config = $this->config('authenticators.'.$authenticatorName)->toArray();
+        $config = $this->config('authenticators.'.$authenticatorName);
+        $config = $config instanceof Config ? $config->toArray() : $config;
         if (is_null($config)) {
             throw new InvalidArgumentException("Auth guard [{$authenticatorName}] is not defined.");
         }

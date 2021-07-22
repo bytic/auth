@@ -10,6 +10,7 @@ use ByTIC\Auth\Tests\AbstractTest;
 use ByTIC\Auth\Tests\Fixtures\Security\Guard\AppCustomAuthenticator;
 use Mockery\Mock;
 use Nip\Container\Container;
+use Symfony\Component\Security\Guard\Authenticator\GuardBridgeAuthenticator;
 
 /**
  * Class CanCreateGuardAuthenticatorsTest

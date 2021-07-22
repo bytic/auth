@@ -26,6 +26,7 @@
     }
   },
   "require": {
+    "bytic/event-dispatcher": "^0.9|^1.0",
     "bytic/controllers": "^0.9|^1.0",
     "bytic/cookie": "^0.9|^1.0",
     "bytic/helpers": "^0.9|^1.0",
