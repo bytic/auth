@@ -5,7 +5,7 @@ namespace ByTIC\Auth\Security\Core\UserProvider;
 use ByTIC\Auth\Models\Users\Resolvers\UsersResolvers;
 use ByTIC\Auth\Models\Users\Traits\AbstractUserTrait;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -16,11 +16,18 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  */
 class IdentifierUserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
-
     /**
      * @inheritDoc
      */
     public function loadUserByUsername(string $username)
+    {
+        return $this->loadUserByIdentifier($username);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function loadUserByIdentifier(string $username)
     {
         $user = UsersResolvers::resolveByUsername($username);
 
@@ -28,7 +35,7 @@ class IdentifierUserProvider implements UserProviderInterface, PasswordUpgraderI
             return $user;
         }
 
-        throw new UsernameNotFoundException(
+        throw new UserNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );
     }
