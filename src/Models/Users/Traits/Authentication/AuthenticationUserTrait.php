@@ -133,6 +133,17 @@ trait AuthenticationUserTrait
     }
 
     /**
+     * @param $password
+     * @return bool
+     */
+    public function checkSaltedPassword($password): bool
+    {
+        $hashed = Encoder::encoder()->encodePassword($this, $this->new_password);
+
+        return $this->password == $hashed;
+    }
+
+    /**
      * @param array $request
      * @return bool
      */
