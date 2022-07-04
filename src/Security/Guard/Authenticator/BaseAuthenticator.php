@@ -4,19 +4,15 @@ namespace ByTIC\Auth\Security\Guard\Authenticator;
 
 use ByTIC\Auth\Utility\Encoder;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 
 /**
  * Class BaseAuthenticator
  * @package ByTIC\Auth\Security\Guard\Authenticator
  */
-class BaseAuthenticator extends AbstractGuardAuthenticator implements PasswordAuthenticatedInterface
+class BaseAuthenticator extends AbstractAuthenticator implements PasswordAuthenticatedInterface
 {
     /**
      * @var UserPasswordEncoderInterface
@@ -28,18 +24,15 @@ class BaseAuthenticator extends AbstractGuardAuthenticator implements PasswordAu
         $this->encoderFactory = Encoder::factory();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function authenticate(Request $request)
     {
-        // TODO: Implement start() method.
+        $credentials = $this->getCredentials($request);
     }
 
     /**
      * @inheritDoc
      */
-    public function supports(Request $request)
+    public function supports(Request $request): ?bool
     {
         return $request->request->has('_username') && $request->request->has('_password');
     }
@@ -55,63 +48,46 @@ class BaseAuthenticator extends AbstractGuardAuthenticator implements PasswordAu
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getUser($credentials, UserProviderInterface $userProvider)
-    {
-        if (null === $credentials) {
-            // The token header was empty, authentication fails with HTTP Status
-            // Code 401 "Unauthorized"
-            return null;
-        }
+//    /**
+//     * @inheritDoc
+//     */
+//    public function getUser($credentials, UserProviderInterface $userProvider)
+//    {
+//        if (null === $credentials) {
+//            // The token header was empty, authentication fails with HTTP Status
+//            // Code 401 "Unauthorized"
+//            return null;
+//        }
+//
+//        // The "username" in this case is the apiToken, see the key `property`
+//        // of `your_db_provider` in `security.yaml`.
+//        // If this returns a user, checkCredentials() is called next:
+//        return $userProvider->loadUserByIdentifier($credentials['username']);
+//    }
 
-        // The "username" in this case is the apiToken, see the key `property`
-        // of `your_db_provider` in `security.yaml`.
-        // If this returns a user, checkCredentials() is called next:
-        return $userProvider->loadUserByIdentifier($credentials['username']);
-    }
+//    /**
+//     * @inheritDoc
+//     */
+//    public function getPassword($credentials): ?string
+//    {
+//        return $credentials['password'];
+//    }
 
-    /**
-     * @inheritDoc
-     */
-    public function getPassword($credentials): ?string
-    {
-        return $credentials['password'];
-    }
+//    /**
+//     * @inheritDoc
+//     */
+//    public function checkCredentials($credentials, UserInterface $user)
+//    {
+//        $encoder = $this->encoderFactory->getEncoder($user);
+//
+//        return $encoder->isPasswordValid($user->getPassword(), $credentials['password'], $user->getSalt());
+//    }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkCredentials($credentials, UserInterface $user)
-    {
-        $encoder = $this->encoderFactory->getEncoder($user);
-
-        return $encoder->isPasswordValid($user->getPassword(), $credentials['password'], $user->getSalt());
-
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
-    {
-        // TODO: Implement onAuthenticationFailure() method.
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
-    {
-        // TODO: Implement onAuthenticationSuccess() method.
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function supportsRememberMe()
-    {
-        // TODO: Implement supportsRememberMe() method.
-    }
+//    /**
+//     * @inheritDoc
+//     */
+//    public function supportsRememberMe()
+//    {
+//        // TODO: Implement supportsRememberMe() method.
+//    }
 }

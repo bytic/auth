@@ -32,8 +32,8 @@
     "bytic/helpers": "^0.9|^1.0",
     "bytic/orm": "^0.9|^1.0",
     "bytic/persistent-data": "^1.0",
-    "symfony/security-core": "^4.4|^5.0",
-    "symfony/security-guard": "^4.4|^5.0",
+    "symfony/security-core": "^5.3|^6.0",
+    "symfony/security-guard": "^5.3|^6.0",
     "lexik/jwt-authentication-bundle": "^2.12",
     "lcobucci/jwt": "^4.1"
   },

@@ -6,11 +6,10 @@ use ByTIC\Auth\Security\Core\Encoder\EncoderFactory;
 use ByTIC\Auth\Services\JWTManager;
 use Nip\Config\Config;
 use Nip\Container\ServiceProviders\Providers\AbstractSignatureServiceProvider;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
-use Symfony\Component\Security\Core\User\UserChecker;
+use Symfony\Component\Security\Core\User\InMemoryUserChecker;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
-use Symfony\Component\Security\Http\Authentication\AuthenticatorManager;
 
 /**
  * Class AuthServiceProvider
@@ -94,7 +93,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         $this->getContainer()->share(
             'auth.user_checker',
             function () {
-                return new UserChecker();
+                return new InMemoryUserChecker();
             }
         );
     }
@@ -142,7 +141,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         $this->getContainer()->share(
             self::ENCODER,
             function () {
-                return new UserPasswordEncoder(app('auth.encoders_factory'));
+                return new UserPasswordHasher(app('auth.encoders_factory'));
             }
         );
     }
