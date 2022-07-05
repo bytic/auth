@@ -53,12 +53,14 @@ trait AuthenticationUserTrait
         );
 
         try {
-            /** @var PostAuthenticationGuardToken $result */
-            if (\auth()->supports($authRequest)) {
-                $result = \auth()->authenticateRequest($authRequest);
+            /** @var PostAuthenticationGuardToken $response */
+            $response = \auth()->authenticateRequest($authRequest);
 
-                if ($result->isAuthenticated()) {
-                    $this->writeData($result->getUser()->toArray());
+            $token = \auth()->currentToken();
+            if ($token) {
+                $user = $token->getUser();
+                if ($user) {
+//                $this->writeData($response->getUser()->toArray());
                     $this->doAuthentication();
                 }
             }

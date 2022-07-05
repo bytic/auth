@@ -19,8 +19,6 @@ trait HasAuthenticatorManager
 
     public function createManagerWith(
         ?iterable $authenticators,
-        TokenStorageInterface $tokenStorage,
-        EventDispatcherInterface $eventDispatcher,
         string $firewallName,
         LoggerInterface $logger = null,
         bool $eraseCredentials = true,
@@ -29,8 +27,6 @@ trait HasAuthenticatorManager
     ) {
         $this->manager = function () use (
             $authenticators,
-            $tokenStorage,
-            $eventDispatcher,
             $firewallName,
             $logger,
             $eraseCredentials,
@@ -40,8 +36,8 @@ trait HasAuthenticatorManager
             $authenticators = $authenticators ?: [$this->authenticator()];
             return new AuthenticatorManager(
                 $authenticators,
-                $tokenStorage,
-                $eventDispatcher,
+                $this->tokenStorage,
+                $this->eventDispatcher,
                 $firewallName,
                 $logger,
                 $eraseCredentials,

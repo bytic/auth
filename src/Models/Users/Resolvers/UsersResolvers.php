@@ -72,7 +72,13 @@ class UsersResolvers
         if (strpos($identifier, static::class)) {
             $identifier = static::class.$identifier;
         }
-        list($userTable, $userIdentifier) = explode(static::SEPARATOR, $identifier);
+        $identifier = explode(static::SEPARATOR, $identifier);
+        if (count($identifier) === 2) {
+            list($userTable, $userIdentifier) = $identifier;
+        } else {
+            $userIdentifier = $identifier[0];
+            $userTable = null;
+        }
         $userTable = empty($userTable) ? 'users' : $userTable;
 
         return [$userTable, $userIdentifier];

@@ -43,6 +43,10 @@ class CanExecuteGuardAuthenticatorsTest extends AbstractTest
         /** @var AuthManager|Mock $manager */
         $manager = $container->get('auth');
 
+        $users = \Mockery::mock(Users::class)->makePartial();
+        $users->shouldReceive('findOneByUsername')->once()->andReturn(new User());
+        ModelLocator::set('users', $users);
+
         $result = $manager->authRequestWith(AppCustomAuthenticator::class, $request);
         self::assertNull($result);
     }

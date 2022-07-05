@@ -2,11 +2,11 @@
 
 namespace ByTIC\Auth\Security\Authenticator;
 
-use ByTIC\Auth\Utility\Encoder;
+use ByTIC\Auth\AuthServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -24,10 +24,6 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
  */
 class BaseAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    protected $encoderFactory;
 
     /**
      * @var UserProviderInterface
@@ -36,15 +32,14 @@ class BaseAuthenticator extends AbstractAuthenticator implements AuthenticationE
 
     public function __construct(UserProviderInterface $userProvider = null)
     {
-        $this->encoderFactory = Encoder::factory();
-        $this->userProvider = $userProvider ?? app('auth.user_provider');
+        $this->userProvider = $userProvider ?? app(AuthServiceProvider::USER_PROVIDER);
     }
 
     public function authenticate(Request $request): Passport
     {
         $credentials = $this->getCredentials($request);
-        // @deprecated since Symfony 5.3, change to $this->userProvider->loadUserByIdentifier() in 6.0
         $method = 'loadUserByIdentifier';
+
         if (!method_exists($this->userProvider, 'loadUserByIdentifier')) {
             trigger_deprecation(
                 'symfony/security-core',
@@ -83,7 +78,7 @@ class BaseAuthenticator extends AbstractAuthenticator implements AuthenticationE
     /**
      * @inheritDoc
      */
-    public function getCredentials(Request $request)
+    public function getCredentials(Request $request): array
     {
         return [
             'username' => $request->request->get('_username'),
@@ -101,23 +96,6 @@ class BaseAuthenticator extends AbstractAuthenticator implements AuthenticationE
         return null;
     }
 
-//    /**
-//     * @inheritDoc
-//     */
-//    public function getUser($credentials, UserProviderInterface $userProvider)
-//    {
-//        if (null === $credentials) {
-//            // The token header was empty, authentication fails with HTTP Status
-//            // Code 401 "Unauthorized"
-//            return null;
-//        }
-//
-//        // The "username" in this case is the apiToken, see the key `property`
-//        // of `your_db_provider` in `security.yaml`.
-//        // If this returns a user, checkCredentials() is called next:
-//        return $userProvider->loadUserByIdentifier($credentials['username']);
-//    }
-
     /**
      * @inheritDoc
      */
@@ -126,25 +104,18 @@ class BaseAuthenticator extends AbstractAuthenticator implements AuthenticationE
         return $credentials['password'];
     }
 
-//    /**
-//     * @inheritDoc
-//     */
-//    public function checkCredentials($credentials, UserInterface $user)
-//    {
-//        $encoder = $this->encoderFactory->getEncoder($user);
-//
-//        return $encoder->isPasswordValid($user->getPassword(), $credentials['password'], $user->getSalt());
-//    }
-
-//    /**
-//     * @inheritDoc
-//     */
-//    public function supportsRememberMe()
-//    {
-//        // TODO: Implement supportsRememberMe() method.
-//    }
+    /**
+     * @inheritDoc
+     */
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        // TODO: Implement start() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createToken(Passport $passport, string $firewallName): TokenInterface
+    {
+        return new UsernamePasswordToken($passport->getUser(), $firewallName, $passport->getUser()->getRoles());
     }
 }

@@ -43,7 +43,7 @@ class AbstractUsersTraitTest extends AbstractTest
         $current = $users->getCurrent();
 
         self::assertInstanceOf(User::class, $current);
-        self::assertEquals(9, $current->id);
+        self::assertEquals(9, $current->getId());
         self::assertTrue($current->isInDB());
         self::assertTrue($current->authenticated());
 

@@ -7,7 +7,6 @@ use ByTIC\Auth\Services\JWTManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticatorManager;
-use Symfony\Component\Security\Http\Authentication\AuthenticatorManagerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -20,6 +19,8 @@ class AuthManager
     use Behaviours\CanCreateAuthenticators;
     use Behaviours\CanExecuteAuthenticators;
     use Behaviours\HasAuthenticatorManager;
+    use Behaviours\HasTokenStorage;
+    use Behaviours\HasEventDispatcher;
 
     /**
      * @var \Closure|AuthenticatorManager
@@ -36,10 +37,11 @@ class AuthManager
         bool $hideUserNotFoundExceptions = true,
         array $requiredBadges = []
     ) {
+        $this->tokenStorage = $tokenStorage;
+        $this->setEventDispatcher($eventDispatcher);
+
         $this->createManagerWith(
             $authenticators,
-            $tokenStorage,
-            $eventDispatcher,
             $firewallName,
             $logger,
             $eraseCredentials,

@@ -43,7 +43,7 @@ trait AbstractUserTrait
     /**
      * @return mixed|void|null
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->getAttribute('password');
     }
@@ -81,6 +81,46 @@ trait AbstractUserTrait
     public function setPassword(string $password)
     {
         $this->setAttribute('password', $password);
+    }
+
+    /**
+     * Returns the user unique id.
+     *
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->getAttribute('id');
+    }
+
+    public function getEmail()
+    {
+        return $this->getAttribute('email');
+    }
+
+    public function setEmail($email)
+    {
+        $this->setAttribute('email', $email);
+    }
+
+    public function hasRole($role)
+    {
+        return false;
+    }
+
+    public function setRoles(array $roles)
+    {
+        // TODO: Implement setRoles() method.
+    }
+
+    public function addRole($role)
+    {
+        // TODO: Implement addRole() method.
+    }
+
+    public function removeRole($role)
+    {
+        // TODO: Implement removeRole() method.
     }
 
     /**

@@ -11,6 +11,7 @@ use ByTIC\Auth\Tests\AbstractTest;
 use ByTIC\Auth\Tests\Fixtures\Security\Authenticator\AppCustomAuthenticator;
 use Mockery\Mock;
 use Nip\Container\Container;
+use Symfony\Component\Security\Core\User\ChainUserProvider;
 
 /**
  * Class CanCreateGuardAuthenticatorsTest
@@ -23,7 +24,7 @@ class CanCreateGuardAuthenticatorsTest extends AbstractTest
     {
         /** @var AuthManager|Mock $manager */
         $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
-        Container::getInstance()->set(AuthServiceProvider::ENCODERS_FACTORY, '');
+        Container::getInstance()->set(AuthServiceProvider::USER_PROVIDER, IdentifierUserProvider::class);
         $this->mockUserProvider();
         $authenticator = $manager->authenticator();
 
@@ -33,8 +34,10 @@ class CanCreateGuardAuthenticatorsTest extends AbstractTest
     public function test_guardAuthenticator_withClassName()
     {
         /** @var AuthManager|Mock $manager */
-        $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
+        $manager = \Mockery::mock(AuthManager::class)
+            ->makePartial()->shouldAllowMockingProtectedMethods();
 
+        Container::getInstance()->set(AuthServiceProvider::USER_PROVIDER, IdentifierUserProvider::class);
         $authenticator = $manager->authenticator(AppCustomAuthenticator::class);
 
         self::assertInstanceOf(AppCustomAuthenticator::class, $authenticator);
@@ -44,6 +47,7 @@ class CanCreateGuardAuthenticatorsTest extends AbstractTest
     {
         /** @var AuthManager|Mock $manager */
         $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
+        Container::getInstance()->set(AuthServiceProvider::USER_PROVIDER, IdentifierUserProvider::class);
 
         $manager->shouldReceive('createAuthenticator')
             ->once()
