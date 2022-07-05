@@ -2,8 +2,8 @@
 
 namespace ByTIC\Auth\Tests;
 
-use ByTIC\Auth\AuthManager;
 use ByTIC\Auth\AuthServiceProvider;
+use ByTIC\Auth\Manager\AuthManager;
 use ByTIC\Auth\Security\Core\UserProvider\IdentifierUserProvider;
 use Nip\Config\Config;
 use Nip\Container\Utility\Container;
@@ -59,7 +59,7 @@ class AuthServiceProviderTest extends AbstractTest
     }
 
     /**
-     * @return Container
+     * @return false|\Nip\Container\Container|Container|\Psr\Container\ContainerInterface
      */
     protected function initServiceProvider()
     {

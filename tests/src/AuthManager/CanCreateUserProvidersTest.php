@@ -2,7 +2,7 @@
 
 namespace ByTIC\Auth\Tests\AuthManager;
 
-use ByTIC\Auth\AuthManager;
+use ByTIC\Auth\Manager\AuthManager;
 use ByTIC\Auth\Security\Core\UserProvider\IdentifierUserProvider;
 use ByTIC\Auth\Tests\AbstractTest;
 use Mockery\Mock;

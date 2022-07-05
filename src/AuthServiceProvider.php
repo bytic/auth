@@ -2,13 +2,16 @@
 
 namespace ByTIC\Auth;
 
+use ByTIC\Auth\Manager\AuthManager;
 use ByTIC\Auth\Security\Core\Encoder\EncoderFactory;
 use ByTIC\Auth\Services\JWTManager;
+use ByTIC\EventDispatcher\Dispatcher\EventDispatcher;
 use Nip\Config\Config;
 use Nip\Container\ServiceProviders\Providers\AbstractSignatureServiceProvider;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\User\InMemoryUserChecker;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 /**
@@ -26,11 +29,11 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
     /**
      * @inheritdoc
      */
-    public function provides()
+    public function provides(): array
     {
         return [
             'auth',
-            'auth.user_provider',
+            self::USER_PROVIDER,
             'auth.user_checker',
             'auth.token_storage',
             'auth.guard_handler',
@@ -54,7 +57,6 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         $this->registerTokenStorage();
         $this->registerEncoderFactory();
         $this->registerEncoder();
-        $this->registerAuthenticatorManager();
         $this->registerJwtManager();
     }
 
@@ -63,9 +65,15 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
         $this->getContainer()->share(
             'auth',
             function () {
-                return new AuthManager();
+                return new AuthManager(
+                    null,
+                    $this->getContainer()->get('auth.token_storage'),
+                    $this->getContainer()->has('events') ? $this->getContainer()->get('events') : new EventDispatcher(),
+                    'main'
+                );
             }
         );
+        $this->getContainer()->alias('auth', self::AUTHENTICATOR_MANAGER);
     }
 
     /**
@@ -124,7 +132,7 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
             self::ENCODERS_FACTORY,
             function () {
                 $encoders = config("auth.encoders", [
-                    \Symfony\Component\Security\Core\User\UserInterface::class => [
+                    UserInterface::class => [
                         'algorithm' => 'auto',
                         'hash_algorithm' => 'sha256',
                         'cost' => 12,
@@ -154,19 +162,5 @@ class AuthServiceProvider extends AbstractSignatureServiceProvider
                 return new JWTManager();
             }
         );
-    }
-
-    protected function registerAuthenticatorManager()
-    {
-//        $this->getContainer()->share(
-//            self::AUTHENTICATOR_MANAGER,
-//            function () {
-//                $authenticators = [];
-//                return new AuthenticatorManager(
-//                    $authenticators,
-//                    app('events'),
-//                );
-//            }
-//        );
     }
 }

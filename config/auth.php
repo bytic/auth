@@ -14,7 +14,7 @@ return [
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',
-        'authenticator' => \ByTIC\Auth\Security\Guard\Authenticator\BaseAuthenticator::class,
+        'authenticator' => \ByTIC\Auth\Security\Authenticator\BaseAuthenticator::class,
     ],
 
     /*

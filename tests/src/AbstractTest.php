@@ -2,6 +2,8 @@
 
 namespace ByTIC\Auth\Tests;
 
+use ByTIC\Auth\AuthServiceProvider;
+use ByTIC\Auth\Security\Core\UserProvider\IdentifierUserProvider;
 use Mockery;
 use Nip\Config\Config;
 use Nip\Container\Container;
@@ -31,6 +33,11 @@ abstract class AbstractTest extends TestCase
         $path = TEST_FIXTURE_PATH . '/config/' . $name . '.php';
         $data = require $path;
         $container->set('config', new Config(['auth' => $data]));
+    }
+
+    protected function mockUserProvider()
+    {
+        Container::getInstance()->set(AuthServiceProvider::USER_PROVIDER, new IdentifierUserProvider());
     }
 
 

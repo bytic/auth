@@ -2,15 +2,15 @@
 
 namespace ByTIC\Auth\Tests\AuthManager;
 
-use ByTIC\Auth\AuthManager;
+use ByTIC\Auth\Manager\AuthManager;
 use ByTIC\Auth\AuthServiceProvider;
+use ByTIC\Auth\Security\Authenticator\BaseAuthenticator;
 use ByTIC\Auth\Security\Authenticator\JwtAuthenticator;
-use ByTIC\Auth\Security\Guard\Authenticator\BaseAuthenticator;
+use ByTIC\Auth\Security\Core\UserProvider\IdentifierUserProvider;
 use ByTIC\Auth\Tests\AbstractTest;
-use ByTIC\Auth\Tests\Fixtures\Security\Guard\AppCustomAuthenticator;
+use ByTIC\Auth\Tests\Fixtures\Security\Authenticator\AppCustomAuthenticator;
 use Mockery\Mock;
 use Nip\Container\Container;
-use Symfony\Component\Security\Guard\Authenticator\GuardBridgeAuthenticator;
 
 /**
  * Class CanCreateGuardAuthenticatorsTest
@@ -24,7 +24,8 @@ class CanCreateGuardAuthenticatorsTest extends AbstractTest
         /** @var AuthManager|Mock $manager */
         $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
         Container::getInstance()->set(AuthServiceProvider::ENCODERS_FACTORY, '');
-        $authenticator = $manager->guardAuthenticator();
+        $this->mockUserProvider();
+        $authenticator = $manager->authenticator();
 
         self::assertInstanceOf(BaseAuthenticator::class, $authenticator);
     }
@@ -34,7 +35,7 @@ class CanCreateGuardAuthenticatorsTest extends AbstractTest
         /** @var AuthManager|Mock $manager */
         $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
 
-        $authenticator = $manager->guardAuthenticator(AppCustomAuthenticator::class);
+        $authenticator = $manager->authenticator(AppCustomAuthenticator::class);
 
         self::assertInstanceOf(AppCustomAuthenticator::class, $authenticator);
     }
@@ -43,14 +44,18 @@ class CanCreateGuardAuthenticatorsTest extends AbstractTest
     {
         /** @var AuthManager|Mock $manager */
         $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
-        $manager->shouldReceive('createGuardAuthenticator')->once()
-            ->with('custom-authenticator')->andReturn(new AppCustomAuthenticator());
+
+        $manager->shouldReceive('createAuthenticator')
+            ->once()
+            ->with('custom-authenticator')
+            ->andReturn(new AppCustomAuthenticator());
 
 //        Container::getInstance()->set('custom-authenticator', new AppCustomAuthenticator());
 
-        $authenticator1 = $manager->guardAuthenticator('custom-authenticator');
+        $authenticator1 = $manager->authenticator('custom-authenticator');
         $authenticator1->singleton = true;
-        $authenticator2 = $manager->guardAuthenticator(AppCustomAuthenticator::class);
+
+        $authenticator2 = $manager->authenticator(AppCustomAuthenticator::class);
 
         self::assertInstanceOf(AppCustomAuthenticator::class, $authenticator1);
         self::assertInstanceOf(AppCustomAuthenticator::class, $authenticator2);
@@ -65,7 +70,7 @@ class CanCreateGuardAuthenticatorsTest extends AbstractTest
             ['class' => \ByTIC\Auth\Security\Authenticator\JwtAuthenticator::class]
         );
 
-        $authenticator = $manager->guardAuthenticator('jwt');
+        $authenticator = $manager->authenticator('jwt');
 
         self::assertInstanceOf(JwtAuthenticator::class, $authenticator);
     }

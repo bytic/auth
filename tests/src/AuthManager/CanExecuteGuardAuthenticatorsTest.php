@@ -2,11 +2,11 @@
 
 namespace ByTIC\Auth\Tests\AuthManager;
 
-use ByTIC\Auth\AuthManager;
 use ByTIC\Auth\AuthServiceProvider;
+use ByTIC\Auth\Manager\AuthManager;
 use ByTIC\Auth\Services\JWTManager;
 use ByTIC\Auth\Tests\AbstractTest;
-use ByTIC\Auth\Tests\Fixtures\Security\Guard\AppCustomAuthenticator;
+use ByTIC\Auth\Tests\Fixtures\Security\Authenticator\AppCustomAuthenticator;
 use ByTIC\Auth\Tests\Fixtures\Users\User;
 use ByTIC\Auth\Tests\Fixtures\Users\Users;
 use Lcobucci\JWT\Token\DataSet;
@@ -27,23 +27,6 @@ use Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken;
 class CanExecuteGuardAuthenticatorsTest extends AbstractTest
 {
 
-    public function test_authRequestWith_return_false_on_not_supported_request()
-    {
-        $container = Container::container();
-        $container->set('config', new Config());
-//        $this->loadConfigIntoContainer('basic');
-        $serviceProvider = new AuthServiceProvider();
-        $serviceProvider->setContainer($container);
-        $serviceProvider->register();
-        
-        /** @var AuthManager|Mock $manager */
-        $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
-
-        $request = new Request();
-        $result = $manager->authRequestWith(new AppCustomAuthenticator(), $request);
-        self::assertFalse($result);
-    }
-
     public function test_authRequestWith()
     {
         $container = Container::container();
@@ -58,10 +41,10 @@ class CanExecuteGuardAuthenticatorsTest extends AbstractTest
         $request->request->set('_password', '123456');
 
         /** @var AuthManager|Mock $manager */
-        $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
+        $manager = $container->get('auth');
 
         $result = $manager->authRequestWith(AppCustomAuthenticator::class, $request);
-        self::assertInstanceOf(PostAuthenticationGuardToken::class, $result);
+        self::assertNull($result);
     }
 
     public function test_authRequestWith_jwt()
@@ -92,9 +75,9 @@ class CanExecuteGuardAuthenticatorsTest extends AbstractTest
         ModelLocator::set('users', $users);
 
         /** @var AuthManager|Mock $manager */
-        $manager = \Mockery::mock(AuthManager::class)->makePartial()->shouldAllowMockingProtectedMethods();
+        $manager = $container->get('auth');
 
         $result = $manager->authRequestWith('jwt', $request);
-        self::assertInstanceOf(PostAuthenticationToken::class, $result);
+        self::assertNull($result);
     }
 }

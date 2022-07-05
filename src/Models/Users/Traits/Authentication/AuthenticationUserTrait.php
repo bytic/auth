@@ -29,6 +29,7 @@ use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 trait AuthenticationUserTrait
 {
     use \ByTIC\Auth\Legacy\Models\Users\AuthenticationUserTrait;
+
     protected $authenticated = false;
 
     /**
@@ -41,19 +42,25 @@ trait AuthenticationUserTrait
     {
         $authRequest = new Request();
 
-        $authRequest->request->set('_username',
-            $this->getManager()->getTable().UsersResolvers::SEPARATOR
-            .($incomingRequest ? clean($incomingRequest['email']) : $this->email));
-        $authRequest->request->set('_password',
-            $incomingRequest ? clean($incomingRequest['password']) : $this->password);
+        $authRequest->request->set(
+            '_username',
+            $this->getManager()->getTable() . UsersResolvers::SEPARATOR
+            . ($incomingRequest ? clean($incomingRequest['email']) : $this->email)
+        );
+        $authRequest->request->set(
+            '_password',
+            $incomingRequest ? clean($incomingRequest['password']) : $this->password
+        );
 
         try {
             /** @var PostAuthenticationGuardToken $result */
-            $result = \auth()->authenticateRequest($authRequest);
+            if (\auth()->supports($authRequest)) {
+                $result = \auth()->authenticateRequest($authRequest);
 
-            if ($result->isAuthenticated()) {
-                $this->writeData($result->getUser()->toArray());
-                $this->doAuthentication();
+                if ($result->isAuthenticated()) {
+                    $this->writeData($result->getUser()->toArray());
+                    $this->doAuthentication();
+                }
             }
         } catch (AuthenticationException $exception) {
         }

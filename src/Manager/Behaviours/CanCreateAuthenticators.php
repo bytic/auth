@@ -1,12 +1,13 @@
 <?php
 
-namespace ByTIC\Auth\AuthManager;
+namespace ByTIC\Auth\Manager\Behaviours;
 
-use ByTIC\Auth\Security\Guard\Authenticator\BaseAuthenticator;
+use ByTIC\Auth\Security\Authenticator\BaseAuthenticator;
 use InvalidArgumentException;
 use Nip\Config\Config;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Symfony\Component\Security\Guard\Authenticator\GuardBridgeAuthenticator;
+use Symfony\Component\Security\Http\Authentication\AuthenticatorManager;
+use Symfony\Component\Security\Http\Authentication\AuthenticatorManagerInterface;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 
 /**
  * Trait CanCreateGuardAuthenticators
@@ -15,18 +16,18 @@ use Symfony\Component\Security\Guard\Authenticator\GuardBridgeAuthenticator;
 trait CanCreateAuthenticators
 {
     /**
-     * @var AbstractGuardAuthenticator[]
+     * @var AuthenticatorManagerInterface[]
      */
     protected $authenticators = [];
 
     /**
      * @param null $authenticatorName
-     * @return AbstractGuardAuthenticator
+     * @return AbstractAuthenticator
      * @noinspection PhpDocMissingThrowsInspection
      */
-    public function guardAuthenticator($authenticatorName = null)
+    public function authenticator($authenticatorName = null)
     {
-        $authenticatorName = $authenticatorName ?: $this->getDefaultGuardAuthenticator();
+        $authenticatorName = $authenticatorName ?: $this->getDefaultAuthenticator();
 
         if (empty($authenticatorName)) {
             /** @noinspection PhpUnhandledExceptionInspection */
@@ -34,7 +35,7 @@ trait CanCreateAuthenticators
         }
 
         if (!isset($this->authenticators[$authenticatorName])) {
-            $authenticator = $this->createGuardAuthenticator($authenticatorName);
+            $authenticator = $this->createAuthenticator($authenticatorName);
 
 //            if ($authenticator instanceof AbstractGuardAuthenticator) {
 //                $authenticator = new GuardBridgeAuthenticator($authenticator, $this->userProvider());
@@ -50,9 +51,9 @@ trait CanCreateAuthenticators
 
     /**
      * @param $authenticatorName
-     * @return AbstractGuardAuthenticator
+     * @return AuthenticatorManager
      */
-    protected function createGuardAuthenticator($authenticatorName)
+    protected function createAuthenticator($authenticatorName)
     {
         if (class_exists($authenticatorName)) {
             return app($authenticatorName);
@@ -78,7 +79,7 @@ trait CanCreateAuthenticators
     /**
      * @return string
      */
-    protected function getDefaultGuardAuthenticator()
+    protected function getDefaultAuthenticator(): string
     {
         return $this->config('defaults.authenticator', BaseAuthenticator::class);
     }

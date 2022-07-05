@@ -1,6 +1,6 @@
 <?php
 
-namespace ByTIC\Auth\AuthManager;
+namespace ByTIC\Auth\Manager\Behaviours;
 
 use ByTIC\Auth\Security\Core\UserProvider\IdentifierUserProvider;
 use Symfony\Component\Security\Core\User\UserProviderInterface;

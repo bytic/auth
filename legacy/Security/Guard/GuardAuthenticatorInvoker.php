@@ -1,6 +1,6 @@
 <?php
 
-namespace ByTIC\Auth\Security\Guard;
+namespace ByTIC\Auth\Legacy\Security\Guard;
 
 use Nip\Http\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -14,7 +14,6 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Guard\Token\PreAuthenticationGuardToken;
-
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 
 use function get_class;
@@ -24,6 +23,8 @@ use function is_object;
 /**
  * Class GuardAuthenticatorInvoker
  * @package ByTIC\Auth\Security\Guard
+ *
+ * @deprecated use new authentication system
  */
 class GuardAuthenticatorInvoker
 {
