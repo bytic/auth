@@ -8,7 +8,7 @@ use ByTIC\Auth\Security\Core\UserProvider\IdentifierUserProvider;
 use Nip\Config\Config;
 use Nip\Container\Utility\Container;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\User\UserChecker;
+use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 /**
@@ -39,7 +39,7 @@ class AuthServiceProviderTest extends AbstractTest
         $container = $this->initServiceProvider();
 
         $loader = $container->get('auth.user_checker');
-        self::assertInstanceOf(UserChecker::class, $loader);
+        self::assertInstanceOf(UserCheckerInterface::class, $loader);
     }
 
     public function test_registerTokenStorage()

@@ -35,7 +35,7 @@ trait AbstractUserTrait
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         return [];
     }
@@ -61,7 +61,10 @@ trait AbstractUserTrait
         return $this->getAttribute('username');
     }
 
-    public function getUserIdentifier()
+    /**
+     * @inheritDoc
+     */
+    public function getUserIdentifier(): string
     {
         return $this->getAttribute('email');
     }
@@ -77,7 +80,7 @@ trait AbstractUserTrait
      */
     public function setPassword(string $password)
     {
-        return $this->setAttribute('password', $password);
+        $this->setAttribute('password', $password);
     }
 
     /**

@@ -5,6 +5,7 @@ namespace ByTIC\Auth\Models\Users\Resolvers;
 use ByTIC\Auth\Models\Users\Traits\AbstractUserTrait;
 use Nip\Records\Locator\ModelLocator;
 use Nip\Records\Record;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class UsersResolvers
@@ -36,7 +37,7 @@ class UsersResolvers
 
     /**
      * @param string $identifier
-     * @return string
+     * @return UserInterface
      */
     public static function resolveByUsername(string $identifier)
     {
@@ -49,7 +50,7 @@ class UsersResolvers
     /**
      * @param $userTable
      * @param $userIdentifier
-     * @return \Nip\Records\AbstractModels\Record
+     * @return \Nip\Records\AbstractModels\Record|UserInterface
      */
     protected static function resolveEntity($userTable, $userIdentifier, $field = null)
     {

@@ -6,9 +6,12 @@ use ByTIC\Auth\Models\Users\Resolvers\UsersResolvers;
 use ByTIC\Auth\Models\Users\Traits\AbstractUserTrait;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+
+use function get_class;
 
 /**
  * Class IdentifierUserProvider
@@ -27,16 +30,16 @@ class IdentifierUserProvider implements UserProviderInterface, PasswordUpgraderI
     /**
      * @inheritDoc
      */
-    public function loadUserByIdentifier(string $username)
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        $user = UsersResolvers::resolveByUsername($username);
+        $user = UsersResolvers::resolveByUsername($identifier);
 
         if ($user !== null) {
             return $user;
         }
 
         throw new UserNotFoundException(
-            sprintf('Username "%s" does not exist.', $username)
+            sprintf('Username "%s" does not exist.', $identifier)
         );
     }
 
@@ -47,7 +50,7 @@ class IdentifierUserProvider implements UserProviderInterface, PasswordUpgraderI
     {
 //        if (!$user instanceof User) {
             throw new UnsupportedUserException(
-                sprintf('Instances of "%s" are not supported.', \get_class($user))
+                sprintf('Instances of "%s" are not supported.', get_class($user))
             );
 //        }
 //        $username = $user->getUsername();
@@ -63,10 +66,10 @@ class IdentifierUserProvider implements UserProviderInterface, PasswordUpgraderI
     }
 
     /**
-     * @param UserInterface|AbstractUserTrait $user
+     * @param PasswordAuthenticatedUserInterface|AbstractUserTrait $user
      * @param string $newEncodedPassword
      */
-    public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newEncodedPassword): void
     {
         // set the new encoded password on the User object
         $user->setPassword($newEncodedPassword);
