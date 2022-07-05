@@ -60,7 +60,7 @@ trait AuthenticationUserTrait
             if ($token) {
                 $user = $token->getUser();
                 if ($user) {
-//                $this->writeData($response->getUser()->toArray());
+                    $this->writeData($user->toArray());
                     $this->doAuthentication();
                 }
             }
@@ -125,7 +125,7 @@ trait AuthenticationUserTrait
     public function hashPassword($newPassword = null): string
     {
         $newPassword = $newPassword === null ? $this->new_password : $newPassword;
-        $hashed = Encoder::encoder()->encodePassword($this, $this->new_password);
+        $hashed = Encoder::encoder()->hashPassword($this, $newPassword);
         $this->password = $hashed;
 
         return $hashed;

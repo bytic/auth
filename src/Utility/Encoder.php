@@ -4,7 +4,7 @@ namespace ByTIC\Auth\Utility;
 
 use ByTIC\Auth\AuthServiceProvider;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Class Encoder
@@ -13,7 +13,7 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 class Encoder
 {
     /**
-     * @return PasswordHasherInterface
+     * @return UserPasswordHasherInterface
      */
     public static function encoder()
     {
