@@ -37,7 +37,7 @@ class JWTManager
 
         $jwtConfiguration = Configuration::forSymmetricSigner(
             new Sha256(),
-            InMemory::plainText('')
+            InMemory::plainText('+')
         );
 
         $jwtConfiguration->setValidationConstraints(
