@@ -19,7 +19,7 @@ class UserCookieEngine extends CookiesEngine
     protected function generateData()
     {
         $rawData = parent::generateData();
-        if (strpos($rawData, ':')) {
+        if (is_string($rawData) && strpos($rawData, ':')) {
             list($id, $password) = explode(":", $rawData);
         } else {
             $id       = $rawData;
