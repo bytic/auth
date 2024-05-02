@@ -26,14 +26,14 @@
     }
   },
   "require": {
-    "bytic/event-dispatcher": "^0.9|^1.0",
-    "bytic/controllers": "^0.9|^1.0",
-    "bytic/cookie": "^0.9|^1.0",
-    "bytic/helpers": "^0.9|^1.0",
-    "bytic/orm": "^0.9|^1.0",
+    "bytic/event-dispatcher": "^1.0|^2.0",
+    "bytic/controllers": "^1.0|^2.0",
+    "bytic/cookie": "^1.0|^2.0",
+    "bytic/helpers": "^1.0|^2.0",
+    "bytic/orm": "^1.0|^2.0",
     "bytic/persistent-data": "^1.0|^2.0",
-    "symfony/security-core": "^5.3|^6.0",
-    "symfony/security-guard": "^5.3|^6.0",
+    "symfony/security-core": "^5.3|^6.0|^7.0",
+    "symfony/security-guard": "^5.3|^6.0|^7.0",
     "lexik/jwt-authentication-bundle": "^2.12",
     "lcobucci/jwt": "^4.1|^5.0"
   },
