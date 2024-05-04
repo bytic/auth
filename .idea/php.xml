@@ -206,6 +206,13 @@
       <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
       <path value="$PROJECT_DIR$/vendor/ergebnis/json" />
       <path value="$PROJECT_DIR$/vendor/ergebnis/json-pointer" />
+      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/php-cs-fixer/diff" />
+      <path value="$PROJECT_DIR$/vendor/roave/better-reflection" />
+      <path value="$PROJECT_DIR$/vendor/roave/signature" />
+      <path value="$PROJECT_DIR$/vendor/league/event" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

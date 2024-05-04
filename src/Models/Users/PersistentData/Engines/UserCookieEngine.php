@@ -42,7 +42,7 @@ class UserCookieEngine extends CookiesEngine
         }
         $data = $this->getData();
 
-        return $model->checkSaltedPassword($data['password']);
+        return $this->checkSaltedPassword($model, $data['password']);
     }
 
     /**
@@ -66,8 +66,26 @@ class UserCookieEngine extends CookiesEngine
      */
     protected function generateDataFromModel($model)
     {
-        $helper = $model->getManager()->getPasswordHelper()->setSalt($model->salt);
+        return $model->id . ':' . $this->hashPassword($model);
+    }
 
-        return $model->id . ':' . $helper->hash($model->password);
+    /**
+     * @param $model
+     * @param $password
+     * @return bool
+     */
+    protected function checkSaltedPassword($model, $password): bool
+    {
+        return $this->hashPassword($model) === $password;
+    }
+
+    /**
+     * @param $model
+     * @return mixed
+     */
+    protected function hashPassword($model)
+    {
+        $helper = $model->getManager()->getPasswordHelper()->setSalt($model->salt);
+        return $helper->hash($model->password);
     }
 }
