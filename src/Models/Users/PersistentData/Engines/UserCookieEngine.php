@@ -42,7 +42,7 @@ class UserCookieEngine extends CookiesEngine
         }
         $data = $this->getData();
 
-        return $this->checkSaltedPassword($model, $data['password']);
+        return implode(':', $data) == $this->generateDataFromModel($model);
     }
 
     /**
